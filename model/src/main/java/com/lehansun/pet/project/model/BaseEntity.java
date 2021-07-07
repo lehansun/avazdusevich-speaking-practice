@@ -11,8 +11,8 @@ import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import java.util.Date;
 
-@MappedSuperclass
 @Data
+@MappedSuperclass
 public abstract class BaseEntity {
 
     @Id
@@ -28,4 +28,8 @@ public abstract class BaseEntity {
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
     private EntityStatus status;
+
+    public BaseEntity() {
+        status = EntityStatus.ACTIVE;
+    }
 }

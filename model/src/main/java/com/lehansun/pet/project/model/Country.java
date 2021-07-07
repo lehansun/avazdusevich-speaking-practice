@@ -7,9 +7,9 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "languages")
+@Table(name = "countries")
 @Data
-public class Language extends BaseEntity {
+public class Country extends BaseEntity {
 
     @Column(name = "name")
     private String name;

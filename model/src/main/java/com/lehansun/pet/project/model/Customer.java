@@ -12,6 +12,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import java.time.LocalDate;
 import java.util.List;
 
 @Data
@@ -22,10 +23,10 @@ public class Customer extends BaseEntity {
     @Column(name = "username")
     private String username;
 
-    @Column(name = "first_name")
+    @Column(name = "firstname")
     private String firstname;
 
-    @Column(name = "last_name")
+    @Column(name = "lastname")
     private String lastname;
 
     @Column(name = "email")
@@ -34,9 +35,12 @@ public class Customer extends BaseEntity {
     @Column(name = "password")
     private String password;
 
+    @Column(name = "date_of_birth")
+    private LocalDate dateOfBirth;
+
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "user_roles",
-            joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
+    @JoinTable(name = "customer_roles",
+            joinColumns = {@JoinColumn(name = "customer_id", referencedColumnName = "id")},
             inverseJoinColumns = {@JoinColumn(name = "role_id", referencedColumnName = "id")})
     private List<Role> roles;
 
@@ -49,8 +53,8 @@ public class Customer extends BaseEntity {
     private Language learningLanguage;
 
     @ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
-    @JoinColumn(name = "country")
-    private String country;
+    @JoinColumn(name = "country_id")
+    private Country country;
 
     @Override
     public String toString() {
