@@ -5,6 +5,7 @@ import com.lehansun.pet.project.api.dao.RequestDao;
 import com.lehansun.pet.project.dao.config.TestConfig;
 import com.lehansun.pet.project.model.EntityStatus;
 import com.lehansun.pet.project.model.Request;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@Slf4j
 @ExtendWith(SpringExtension.class)
 @Transactional
 @ContextConfiguration(classes = TestConfig.class, loader = AnnotationConfigContextLoader.class)
@@ -31,6 +33,7 @@ public class RequestJpaDaoTest {
 
     @Test
     void save() {
+        log.info("IN save()");
         // given
         Request request = getNewRequest();
         List<Request> requests = requestDao.getAll();
@@ -48,6 +51,7 @@ public class RequestJpaDaoTest {
 
     @Test
     public void getAll() {
+        log.info("IN getAll()");
         // when
         List<Request> requests = requestDao.getAll();
 
@@ -58,6 +62,7 @@ public class RequestJpaDaoTest {
 
     @Test
     public void getById() {
+        log.info("IN getById()");
         // given
         Request request = getNewRequest();
         requestDao.save(request);
@@ -71,7 +76,18 @@ public class RequestJpaDaoTest {
     }
 
     @Test
+    void shouldReturnNullWhenFindByNonexistentId() {
+        log.info("IN shouldReturnNullWhenFindByNonexistentId()");
+        // when
+        Optional<Request> byId = requestDao.getById(100L);
+
+        // then
+        assertTrue(byId.isEmpty());
+    }
+
+    @Test
     public void update() {
+        log.info("IN update()");
         // given
         Request request = getNewRequest();
         requestDao.save(request);
@@ -89,6 +105,7 @@ public class RequestJpaDaoTest {
 
     @Test
     public void delete() {
+        log.info("IN delete()");
         // given
         Request request = getNewRequest();
         Integer numberOfRecordsBefore = requestDao.getAll().size();
@@ -108,6 +125,7 @@ public class RequestJpaDaoTest {
     }
 
     private Request getNewRequest() {
+        log.info("IN getNewRequest()");
         Request request = new Request();
         request.setInitiatedBy(customerDao.getAll().get(0));
         request.setRequestedLanguage(request.getInitiatedBy().getNativeLanguage());

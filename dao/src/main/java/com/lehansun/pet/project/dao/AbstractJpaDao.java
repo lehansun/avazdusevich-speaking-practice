@@ -2,6 +2,7 @@ package com.lehansun.pet.project.dao;
 
 import com.lehansun.pet.project.api.dao.GenericDao;
 import com.lehansun.pet.project.model.BaseEntity;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.EntityManager;
@@ -21,6 +22,7 @@ import java.util.Optional;
  * @version 1.0
  */
 @Slf4j
+@Setter
 public abstract class AbstractJpaDao<T extends BaseEntity> implements GenericDao<T> {
 
     public static final String SAVE_LOG_MESSAGE = "IN save(), entity - {}";
