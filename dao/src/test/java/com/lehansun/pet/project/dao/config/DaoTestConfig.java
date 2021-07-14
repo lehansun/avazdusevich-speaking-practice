@@ -24,7 +24,7 @@ import java.util.Properties;
 @Configuration
 @EnableTransactionManagement
 @PropertySource("classpath:/test.properties")
-public class TestConfig {
+public class DaoTestConfig {
 
     public static final String TEST_DB_NAME = "public";
     public static final String CHANGE_LOG_PATH = "classpath:/db/changelog/db.changelog-master.xml";

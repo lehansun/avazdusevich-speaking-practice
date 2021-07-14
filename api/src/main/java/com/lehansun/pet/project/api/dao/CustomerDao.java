@@ -10,4 +10,6 @@ import com.lehansun.pet.project.model.Customer;
  * @version 1.0
  */
 public interface CustomerDao extends GenericDao<Customer>{
+
+    Customer getByUsername(String username);
 }

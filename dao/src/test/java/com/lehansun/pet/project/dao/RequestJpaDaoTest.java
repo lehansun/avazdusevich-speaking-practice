@@ -2,7 +2,7 @@ package com.lehansun.pet.project.dao;
 
 import com.lehansun.pet.project.api.dao.CustomerDao;
 import com.lehansun.pet.project.api.dao.RequestDao;
-import com.lehansun.pet.project.dao.config.TestConfig;
+import com.lehansun.pet.project.dao.config.DaoTestConfig;
 import com.lehansun.pet.project.model.EntityStatus;
 import com.lehansun.pet.project.model.Request;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Slf4j
 @ExtendWith(SpringExtension.class)
 @Transactional
-@ContextConfiguration(classes = TestConfig.class, loader = AnnotationConfigContextLoader.class)
+@ContextConfiguration(classes = DaoTestConfig.class, loader = AnnotationConfigContextLoader.class)
 public class RequestJpaDaoTest {
 
     @Autowired

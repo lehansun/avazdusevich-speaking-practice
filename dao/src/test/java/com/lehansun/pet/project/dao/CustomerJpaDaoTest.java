@@ -1,12 +1,10 @@
 package com.lehansun.pet.project.dao;
 
 import com.lehansun.pet.project.api.dao.CustomerDao;
-import com.lehansun.pet.project.dao.config.TestConfig;
+import com.lehansun.pet.project.dao.config.DaoTestConfig;
 import com.lehansun.pet.project.model.Customer;
-import com.lehansun.pet.project.model.Language;
-import com.lehansun.pet.project.model.Role;
+import com.lehansun.pet.project.util.EntityGenerator;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +13,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Slf4j
 @ExtendWith(SpringExtension.class)
 @Transactional
-@ContextConfiguration(classes = TestConfig.class, loader = AnnotationConfigContextLoader.class)
+@ContextConfiguration(classes = DaoTestConfig.class, loader = AnnotationConfigContextLoader.class)
 public class CustomerJpaDaoTest {
 
     @Autowired
@@ -67,7 +64,7 @@ public class CustomerJpaDaoTest {
     void save() {
         log.info("IN save()");
         // given
-        Customer customer = getNewCustomer();
+        Customer customer = EntityGenerator.getNewCustomer();
         List<Customer> customers = customerDao.getAll();
         Integer numberOfRecordsBefore = customers.size();
 
@@ -85,7 +82,7 @@ public class CustomerJpaDaoTest {
     public void update() {
         log.info("IN update()");
         // given
-        Customer customer = getNewCustomer();
+        Customer customer = EntityGenerator.getNewCustomer();
         customerDao.save(customer);
 
         // when
@@ -102,7 +99,7 @@ public class CustomerJpaDaoTest {
     public void delete() {
         log.info("IN delete()");
         // given
-        Customer customer = getNewCustomer();
+        Customer customer = EntityGenerator.getNewCustomer();
         Integer numberOfRecordsBefore = customerDao.getAll().size();
 
 
@@ -119,44 +116,6 @@ public class CustomerJpaDaoTest {
         assertFalse(byId.isPresent());
     }
 
-    private Customer getNewCustomer() {
-        log.info("IN getNewCustomer()");
-        Customer customer = new Customer();
-        customer.setUsername(RandomStringUtils.randomAlphabetic(5, 45));
-        customer.setFirstname(RandomStringUtils.randomAlphabetic(5, 45));
-        customer.setLastname(RandomStringUtils.randomAlphabetic(5, 45));
-        customer.setEmail(RandomStringUtils.randomAlphabetic(5, 45));
-        customer.setPassword(RandomStringUtils.randomAlphanumeric(7, 255));
-        customer.setNativeLanguage(getNativeLanguage());
-        customer.setLearningLanguage(getLearningLanguage());
-        customer.setRoles(getRoles());
-        return customer;
-    }
 
-    private Language getNativeLanguage() {
-        log.info("IN getNativeLanguage()");
-        Language language = new Language();
-        language.setName("Russian");
-        language.setId(1L);
-        return language;
-    }
-
-    private Language getLearningLanguage() {
-        log.info("IN getLearningLanguage()");
-        Language language = new Language();
-        language.setName("English");
-        language.setId(2L);
-        return language;
-    }
-
-    private List<Role> getRoles() {
-        log.info("IN getRoles   ()");
-        List<Role> roles = new ArrayList<>();
-        Role role = new Role();
-        role.setName("USER");
-        role.setId(1L);
-        roles.add(role);
-        return roles;
-    }
 
 }

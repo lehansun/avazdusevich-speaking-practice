@@ -25,4 +25,8 @@ public class CustomerJpaDao extends AbstractJpaDao<Customer> implements Customer
         return Customer.class;
     }
 
+    @Override
+    public Customer getByUsername(String username) {
+        return entityManager.find(getClazz(), username);
+    }
 }
