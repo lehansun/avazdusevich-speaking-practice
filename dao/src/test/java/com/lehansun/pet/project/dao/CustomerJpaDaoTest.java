@@ -81,12 +81,13 @@ public class CustomerJpaDaoTest {
     @Test
     public void update() {
         log.info("IN update()");
+
         // given
         Customer customer = EntityGenerator.getNewCustomer();
         customerDao.save(customer);
+        String newName = "TestName";
 
         // when
-        String newName = "TestName";
         customer.setFirstname(newName);
         customerDao.update(customer);
         customer = customerDao.getById(customer.getId()).get();
@@ -114,6 +115,18 @@ public class CustomerJpaDaoTest {
         assertEquals(1, (numberOfRecordsAfterSaving - numberOfRecordsBefore));
         assertEquals(numberOfRecordsBefore, numberOfRecordsAfterDeleting);
         assertFalse(byId.isPresent());
+    }
+
+    @Test
+    public void getByUsername() {
+        log.info("IN getByUsername()");
+
+        // when
+        Optional<Customer> byUsername = customerDao.getByUsername("Lehansun");
+
+        // then
+        assertTrue(byUsername.isPresent());
+        assertEquals(customerDao.getAll().get(0), byUsername.get());
     }
 
 

@@ -23,7 +23,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class AbstractService<T extends BaseEntity> implements GenericService<T> {
 
-    protected static final String ELEMENT_DOES_NOT_EXIST = "Element with id-%d does not exist";
+    protected static final String ELEMENT_WITH_NON_EXISTENT_ID = "Element with id-%d does not exist";
+    protected static final String ELEMENT_WITH_NON_EXISTENT_USERNAME = "Element with username-%s does not exist";
     protected static final String FAILED_TO_UPDATE_ELEMENT = "Failed to update element-";
     private static final String FAILED_TO_DELETE_ELEMENT_BY_ID = "Failed to delete element id-";
 

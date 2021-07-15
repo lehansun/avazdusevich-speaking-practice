@@ -29,8 +29,7 @@ public class SimpleCustomerService extends AbstractService<Customer> implements 
     public List<CustomerDTO> getAllDTOs() {
         List<Customer> customers = getAll();
         java.lang.reflect.Type targetListType = new TypeToken<List<CustomerDTO>>() {}.getType();
-        List<CustomerDTO> customerDTOs = modelMapper.map(customers, targetListType);
-        return customerDTOs;
+        return modelMapper.map(customers, targetListType);
     }
 
     @Override
@@ -39,14 +38,14 @@ public class SimpleCustomerService extends AbstractService<Customer> implements 
         if (byId.isPresent()) {
             return modelMapper.map(byId.get(), CustomerDTO.class);
         } else {
-            String message = String.format(ELEMENT_DOES_NOT_EXIST, id);
+            String message = String.format(ELEMENT_WITH_NON_EXISTENT_ID, id);
             log.error(message);
             throw new RuntimeException(message);
         }
     }
 
     @Override
-    public CustomerDTO save(CustomerDTO customerDTO) {
+    public CustomerDTO saveDto(CustomerDTO customerDTO) {
         Customer customer = modelMapper.map(customerDTO, Customer.class);
         save(customer);
         customerDTO.setId(customer.getId());
@@ -54,13 +53,20 @@ public class SimpleCustomerService extends AbstractService<Customer> implements 
     }
 
     @Override
-    public CustomerDTO getByUsername(String username) {
-        Customer customer = customerDao.getByUsername(username);
-        return modelMapper.map(customer, CustomerDTO.class);
+    public CustomerDTO getDtoByUsername(String username) {
+
+        Optional<Customer> byUsername = customerDao.getByUsername(username);
+        if (byUsername.isPresent()) {
+            return modelMapper.map(byUsername.get(), CustomerDTO.class);
+        } else {
+            String message = String.format(ELEMENT_WITH_NON_EXISTENT_USERNAME, username);
+            log.error(message);
+            throw new RuntimeException(message);
+        }
     }
 
     @Override
-    public void update(long id, CustomerDTO customerDTO) {
+    public void updateDto(long id, CustomerDTO customerDTO) {
 
     }
 }

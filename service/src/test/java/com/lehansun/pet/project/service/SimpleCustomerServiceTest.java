@@ -66,13 +66,14 @@ class SimpleCustomerServiceTest {
     void getDtoById_shouldFailOnFindingWithNonExistentId() {
         // given
         long customerId = -1L;
+        String message = "Element with id--1 does not exist";
 
         // when
-        when(customerDao.getById(customerId)).thenThrow(new RuntimeException("Can't find by id"));
+        when(customerDao.getById(customerId)).thenReturn(Optional.empty());
 
         //then
         RuntimeException runtimeException = assertThrows(RuntimeException.class, () -> customerService.getDtoById(customerId));
-        assertEquals("Can't find by id", runtimeException.getLocalizedMessage());
+        assertEquals(message, runtimeException.getLocalizedMessage());
         verify(customerDao, times(1)).getById(any());
     }
 
@@ -81,10 +82,10 @@ class SimpleCustomerServiceTest {
         // given
         Customer customer = EntityGenerator.getNewCustomer();
         String customerUsername = customer.getUsername();
-        when(customerDao.getByUsername(customerUsername)).thenReturn(customer);
+        when(customerDao.getByUsername(customerUsername)).thenReturn(Optional.of(customer));
 
         // when
-        CustomerDTO dto = customerService.getByUsername(customerUsername);
+        CustomerDTO dto = customerService.getDtoByUsername(customerUsername);
 
         //then
         assertEquals(dto.getUsername(), customerUsername);
@@ -95,13 +96,15 @@ class SimpleCustomerServiceTest {
     void getByUsername_shouldFailOnFindingWithNonExistentUsername() {
         // given
         String customerUsername = "Non-existent username";
+        String message = "Element with username-Non-existent username does not exist";
 
         // when
-        when(customerDao.getByUsername(customerUsername)).thenThrow(new RuntimeException("Can't find by username"));
+        when(customerDao.getByUsername(customerUsername)).thenReturn(Optional.empty());
 
         //then
-        RuntimeException runtimeException = assertThrows(RuntimeException.class, () -> customerService.getByUsername(customerUsername));
-        assertEquals("Can't find by username", runtimeException.getLocalizedMessage());
+        RuntimeException runtimeException = assertThrows(RuntimeException.class,
+                () -> customerService.getDtoByUsername(customerUsername));
+        assertEquals(message, runtimeException.getLocalizedMessage());
         verify(customerDao, times(1)).getByUsername(anyString());
     }
 
