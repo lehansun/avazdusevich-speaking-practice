@@ -44,6 +44,7 @@ public class SimpleCustomerService extends AbstractService<Customer> implements 
         }
     }
 
+    @Transactional
     @Override
     public CustomerDTO saveDto(CustomerDTO customerDTO) {
         Customer customer = modelMapper.map(customerDTO, Customer.class);

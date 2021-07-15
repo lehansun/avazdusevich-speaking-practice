@@ -42,6 +42,9 @@
 
         <mockito.version>3.11.2</mockito.version>
         <junit.version>5.7.2</junit.version>
+
+        <servlet.version>4.0.1</servlet.version>
+        <jackson.version>2.12.4</jackson.version>
     </properties>
 
     <dependencyManagement>
@@ -158,6 +161,37 @@
             </dependency>
 
 
+            <!-- web -->
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-web</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-webmvc</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>javax.servlet-api</artifactId>
+                <version>${servlet.version}</version>
+            </dependency>
+
+            <!--  Зависимость позволяет осуществлять маршалинг и анмаршалинг объектов в JSON  -->
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.datatype</groupId>
+                <artifactId>jackson-datatype-jsr310</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+
+
             <!-- Testing -->
             <dependency>
                 <groupId>org.springframework</groupId>
@@ -187,8 +221,6 @@
                 <version>${mockito.version}</version>
                 <scope>test</scope>
             </dependency>
-
-
 
         </dependencies>
     </dependencyManagement>

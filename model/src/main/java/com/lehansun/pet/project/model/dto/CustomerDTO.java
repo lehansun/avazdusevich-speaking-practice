@@ -1,7 +1,5 @@
 package com.lehansun.pet.project.model.dto;
 
-import com.lehansun.pet.project.model.Country;
-import com.lehansun.pet.project.model.Language;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,7 +16,7 @@ public class CustomerDTO {
     private String lastname;
     private String email;
     private LocalDate dateOfBirth;
-    private Language nativeLanguage;
-    private Language learningLanguage;
-    private Country country;
+    private LanguageDTO nativeLanguage;
+    private LanguageDTO learningLanguage;
+    private CountryDTO country;
 }
