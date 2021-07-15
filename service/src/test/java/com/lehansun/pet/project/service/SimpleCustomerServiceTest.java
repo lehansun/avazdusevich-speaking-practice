@@ -49,7 +49,7 @@ class SimpleCustomerServiceTest {
     @Test
     void getDtoById_shouldFindExistingId() {
         // given
-        Long customerId = 1L;
+        long customerId = 1L;
         Customer customer = EntityGenerator.getNewCustomer();
         customer.setId(customerId);
         when(customerDao.getById(customerId)).thenReturn(Optional.of(customer));
@@ -63,9 +63,9 @@ class SimpleCustomerServiceTest {
     }
 
     @Test()
-    void getDtoById_shouldThrowException() {
+    void getDtoById_shouldFailOnFindingWithNonExistentId() {
         // given
-        Long customerId = 1L;
+        long customerId = -1L;
 
         // when
         when(customerDao.getById(customerId)).thenThrow(new RuntimeException("Can't find by id"));
@@ -76,12 +76,56 @@ class SimpleCustomerServiceTest {
         verify(customerDao, times(1)).getById(any());
     }
 
+    @Test
+    void getByUsername_shouldFindCustomer() {
+        // given
+        Customer customer = EntityGenerator.getNewCustomer();
+        String customerUsername = customer.getUsername();
+        when(customerDao.getByUsername(customerUsername)).thenReturn(customer);
+
+        // when
+        CustomerDTO dto = customerService.getByUsername(customerUsername);
+
+        //then
+        assertEquals(dto.getUsername(), customerUsername);
+        verify(customerDao, times(1)).getByUsername(anyString());
+    }
+
+    @Test
+    void getByUsername_shouldFailOnFindingWithNonExistentUsername() {
+        // given
+        String customerUsername = "Non-existent username";
+
+        // when
+        when(customerDao.getByUsername(customerUsername)).thenThrow(new RuntimeException("Can't find by username"));
+
+        //then
+        RuntimeException runtimeException = assertThrows(RuntimeException.class, () -> customerService.getByUsername(customerUsername));
+        assertEquals("Can't find by username", runtimeException.getLocalizedMessage());
+        verify(customerDao, times(1)).getByUsername(anyString());
+    }
+
+    @Test
     void save() {
+        // given
+        Customer customer = EntityGenerator.getNewCustomer();
+
+        // when
+        customerService.save(customer);
+
+        //then
+        verify(customerDao, times(1)).save(customer);
     }
 
-    void getByUsername() {
-    }
-
+    @Test
     void update() {
+        // given
+        Customer customer = EntityGenerator.getNewCustomer();
+
+        // when
+        customerService.update(customer);
+
+        //then
+        verify(customerDao, times(1)).update(customer);
     }
 }
