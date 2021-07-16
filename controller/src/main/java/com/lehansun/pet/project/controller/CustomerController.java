@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -43,12 +44,12 @@ public class CustomerController {
         return ResponseEntity.ok(service.saveDto(customer));
     }
 
-//    @PatchMapping("/{id}")
-//    public  ResponseEntity<Void> updateCustomer(@RequestBody CustomerDTO customer, @PathVariable("id") long id) {
-//        log.info("Received patch request: /customers/" + id);
-//        service.update(id, customer);
-//        return ResponseEntity.noContent().build();
-//    }
+    @PatchMapping("/{id}")
+    public  ResponseEntity<Void> updateCustomer(@RequestBody CustomerDTO customer, @PathVariable("id") long id) {
+        log.info("Received patch request: /customers/" + id);
+        service.updateDto(id, customer);
+        return ResponseEntity.noContent().build();
+    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCustomer(@PathVariable("id") long id) {

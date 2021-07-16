@@ -1,6 +1,8 @@
 package com.lehansun.pet.project.service;
 
+import com.lehansun.pet.project.api.dao.CountryDao;
 import com.lehansun.pet.project.api.dao.CustomerDao;
+import com.lehansun.pet.project.api.dao.LanguageDao;
 import com.lehansun.pet.project.api.service.CustomerService;
 import com.lehansun.pet.project.model.Customer;
 import com.lehansun.pet.project.model.dto.CustomerDTO;
@@ -19,10 +21,14 @@ import java.util.Optional;
 public class SimpleCustomerService extends AbstractService<Customer> implements CustomerService {
 
     private final CustomerDao customerDao;
+    private final LanguageDao languageDao;
+    private final CountryDao countryDao;
 
-    public SimpleCustomerService(CustomerDao customerDao, ModelMapper modelMapper) {
+    public SimpleCustomerService(CustomerDao customerDao, LanguageDao languageDao, CountryDao countryDao, ModelMapper modelMapper) {
         super(customerDao, modelMapper);
         this.customerDao = customerDao;
+        this.languageDao = languageDao;
+        this.countryDao = countryDao;
     }
 
     @Override
@@ -68,6 +74,26 @@ public class SimpleCustomerService extends AbstractService<Customer> implements 
 
     @Override
     public void updateDto(long id, CustomerDTO customerDTO) {
+        Optional<Customer> byId = getById(id);
+        if (byId.isPresent()) {
+            Customer customer = byId.get();
+            prepareToUpdate(customerDTO, customer);
+            customerDao.update(customer);
+        } else {
+            String message = String.format(ELEMENT_WITH_NON_EXISTENT_ID, id);
+            log.error(message);
+            throw new RuntimeException(message);
+        }
+    }
 
+    private void prepareToUpdate(CustomerDTO customerDTO, Customer customer) {
+        customer.setFirstname(customerDTO.getFirstname());
+        customer.setLastname(customerDTO.getLastname());
+        customer.setEmail(customerDTO.getEmail());
+        customer.setPassword(customerDTO.getPassword());
+        customer.setLearningLanguage(languageDao.getById(customerDTO.getLearningLanguage().getId()).get());
+        customer.setNativeLanguage(languageDao.getById(customerDTO.getNativeLanguage().getId()).get());
+        customer.setDateOfBirth(customerDTO.getDateOfBirth());
+        customer.setCountry(countryDao.getById(customerDTO.getCountry().getId()).get());
     }
 }
