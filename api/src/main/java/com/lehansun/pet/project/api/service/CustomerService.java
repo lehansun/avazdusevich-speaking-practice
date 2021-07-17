@@ -10,7 +10,7 @@ public interface CustomerService extends GenericService<Customer> {
 
     List<CustomerDTO> getAllDTOs();
     CustomerDTO getDtoById(long id);
-    CustomerDTO saveDto(CustomerDTO customerDTO);
+    CustomerDTO saveByDTO(CustomerDTO customerDTO);
     CustomerDTO getDtoByUsername(String username);
-    void updateDto(long id, CustomerDTO customerDTO);
+    void updateByDTO(long id, CustomerDTO customerDTO);
 }

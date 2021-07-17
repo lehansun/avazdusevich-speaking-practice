@@ -50,15 +50,6 @@ public class SimpleCustomerService extends AbstractService<Customer> implements 
         }
     }
 
-    @Transactional
-    @Override
-    public CustomerDTO saveDto(CustomerDTO customerDTO) {
-        Customer customer = modelMapper.map(customerDTO, Customer.class);
-        save(customer);
-        customerDTO.setId(customer.getId());
-        return customerDTO;
-    }
-
     @Override
     public CustomerDTO getDtoByUsername(String username) {
 
@@ -72,8 +63,17 @@ public class SimpleCustomerService extends AbstractService<Customer> implements 
         }
     }
 
+    @Transactional
     @Override
-    public void updateDto(long id, CustomerDTO customerDTO) {
+    public CustomerDTO saveByDTO(CustomerDTO customerDTO) {
+        Customer customer = modelMapper.map(customerDTO, Customer.class);
+        save(customer);
+        customerDTO.setId(customer.getId());
+        return customerDTO;
+    }
+
+    @Override
+    public void updateByDTO(long id, CustomerDTO customerDTO) {
         Optional<Customer> byId = getById(id);
         if (byId.isPresent()) {
             Customer customer = byId.get();

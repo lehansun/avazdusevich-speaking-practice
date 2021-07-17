@@ -41,13 +41,13 @@ public class CustomerController {
     @PostMapping
     public ResponseEntity<CustomerDTO> createCustomer(@RequestBody CustomerDTO customer) {
         log.info("Received Post request: /customers");
-        return ResponseEntity.ok(service.saveDto(customer));
+        return ResponseEntity.ok(service.saveByDTO(customer));
     }
 
     @PatchMapping("/{id}")
     public  ResponseEntity<Void> updateCustomer(@RequestBody CustomerDTO customer, @PathVariable("id") long id) {
         log.info("Received patch request: /customers/" + id);
-        service.updateDto(id, customer);
+        service.updateByDTO(id, customer);
         return ResponseEntity.noContent().build();
     }
 

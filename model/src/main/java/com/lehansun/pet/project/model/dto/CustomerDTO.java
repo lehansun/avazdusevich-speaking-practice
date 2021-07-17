@@ -7,7 +7,7 @@ import java.time.LocalDate;
 
 @Getter
 @Setter
-public class CustomerDTO {
+public class CustomerDTO implements Comparable<CustomerDTO> {
 
     private Long id;
     private String username;
@@ -19,4 +19,9 @@ public class CustomerDTO {
     private LanguageDTO nativeLanguage;
     private LanguageDTO learningLanguage;
     private CountryDTO country;
+
+    @Override
+    public int compareTo(CustomerDTO customerDTO) {
+        return this.getUsername().compareTo(customerDTO.getUsername());
+    }
 }
