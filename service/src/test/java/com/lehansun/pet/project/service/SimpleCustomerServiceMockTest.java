@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class SimpleCustomerServiceTest {
+class SimpleCustomerServiceMockTest {
 
     @Spy
     private ModelMapper modelMapper;
@@ -28,8 +28,6 @@ class SimpleCustomerServiceTest {
     private CustomerDao customerDao;
     @InjectMocks
     private SimpleCustomerService customerService;
-
-
 
     @Test
     void getAllDTOs() {
