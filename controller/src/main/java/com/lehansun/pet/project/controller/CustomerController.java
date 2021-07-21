@@ -41,7 +41,7 @@ public class CustomerController {
     @PostMapping
     public ResponseEntity<CustomerDTO> createCustomer(@RequestBody CustomerDTO customer) {
         log.info("Received Post request: /customers");
-        return ResponseEntity.ok(service.saveByDTO(customer));
+        return ResponseEntity.status(201).body(service.saveByDTO(customer));
     }
 
     @PatchMapping("/{id}")

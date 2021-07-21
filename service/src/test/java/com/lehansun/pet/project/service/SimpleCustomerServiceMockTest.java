@@ -64,7 +64,7 @@ class SimpleCustomerServiceMockTest {
     void getDtoById_shouldFailOnFindingWithNonExistentId() {
         // given
         long customerId = -1L;
-        String message = "Element with id--1 does not exist";
+        String message = "Element with id:-1 does not exist";
 
         // when
         when(customerDao.getById(customerId)).thenReturn(Optional.empty());

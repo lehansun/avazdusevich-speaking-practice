@@ -45,7 +45,7 @@ public class SimpleCustomerService extends AbstractService<Customer> implements 
             return modelMapper.map(byId.get(), CustomerDTO.class);
         } else {
             String message = String.format(ELEMENT_WITH_NON_EXISTENT_ID, id);
-            log.error(message);
+            log.warn(message);
             throw new RuntimeException(message);
         }
     }
@@ -90,7 +90,6 @@ public class SimpleCustomerService extends AbstractService<Customer> implements 
         customer.setFirstname(customerDTO.getFirstname());
         customer.setLastname(customerDTO.getLastname());
         customer.setEmail(customerDTO.getEmail());
-        customer.setPassword(customerDTO.getPassword());
         customer.setLearningLanguage(languageDao.getById(customerDTO.getLearningLanguage().getId()).get());
         customer.setNativeLanguage(languageDao.getById(customerDTO.getNativeLanguage().getId()).get());
         customer.setDateOfBirth(customerDTO.getDateOfBirth());

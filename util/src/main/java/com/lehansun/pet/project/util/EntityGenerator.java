@@ -4,8 +4,10 @@ import com.lehansun.pet.project.model.Customer;
 import com.lehansun.pet.project.model.Language;
 import com.lehansun.pet.project.model.Request;
 import com.lehansun.pet.project.model.Role;
+import com.lehansun.pet.project.model.dto.CustomerDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.modelmapper.ModelMapper;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -38,6 +40,11 @@ public class EntityGenerator {
         request.setWishedStartTime(now.plusDays(1));
         request.setWishedEndTime(now.plusDays(2));
         return request;
+    }
+    
+    public static CustomerDTO getNewCustomerDTO() {
+        Customer newCustomer = getNewCustomer();
+        return new ModelMapper().map(newCustomer, CustomerDTO.class);
     }
 
     private static Language getNativeLanguage() {

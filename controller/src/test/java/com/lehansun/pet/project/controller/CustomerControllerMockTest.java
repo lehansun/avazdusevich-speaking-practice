@@ -2,6 +2,7 @@ package com.lehansun.pet.project.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lehansun.pet.project.api.service.CustomerService;
+import com.lehansun.pet.project.controller.config.SpeakingPracticeAppExceptionHandler;
 import com.lehansun.pet.project.model.dto.CustomerDTO;
 import com.lehansun.pet.project.util.EntityGenerator;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,11 +20,9 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.List;
 
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.times;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -48,6 +47,7 @@ class CustomerControllerMockTest {
     void setUp() {
         mockMvc = MockMvcBuilders.standaloneSetup(customerController)
                 .setMessageConverters(new MappingJackson2HttpMessageConverter())
+                .setControllerAdvice(new SpeakingPracticeAppExceptionHandler())
                 .alwaysDo(MockMvcResultHandlers.print())
                 .build();
     }
@@ -61,7 +61,8 @@ class CustomerControllerMockTest {
 
         when(customerService.getAllDTOs()).thenReturn(dtoList);
 
-        mockMvc.perform(get(CUSTOMERS_ENDPOINT))
+        mockMvc.perform(
+                get(CUSTOMERS_ENDPOINT))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().string(objectMapper.writeValueAsString(dtoList)));
@@ -70,15 +71,76 @@ class CustomerControllerMockTest {
         verifyNoMoreInteractions(customerService);
     }
 
-    void getById() {
+    @Test
+    void getById_shouldFindByExistingId() throws Exception {
+        long id = 1;
+        CustomerDTO customerDTO = EntityGenerator.getNewCustomerDTO();
+        customerDTO.setId(id);
+
+        when(customerService.getDtoById(1)).thenReturn(modelMapper.map(customerDTO, CustomerDTO.class));
+
+        mockMvc.perform(
+                get(CUSTOMERS_ENDPOINT + "/" + id))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().string(objectMapper.writeValueAsString(customerDTO)));
+
+        verify(customerService, times(1)).getDtoById(id);
     }
 
-    void createCustomer() {
+    @Test
+    void getById_shouldThrowRuntimeException() throws Exception {
+
+        when(customerService.getDtoById(1)).thenThrow(new RuntimeException("Element does not exist"));
+
+        mockMvc.perform(
+                get(CUSTOMERS_ENDPOINT + "/1"))
+                .andExpect(status().isInternalServerError())
+                .andExpect(mvcResult -> mvcResult.getResolvedException().getClass().equals(RuntimeException.class));
+
+        verify(customerService, times(1)).getDtoById(1);
     }
 
-    void updateCustomer() {
+    @Test
+    void createCustomer_shouldReturnStatus201andCustomerDTO() throws Exception {
+        CustomerDTO customerDTO = EntityGenerator.getNewCustomerDTO();
+        customerDTO.setId(1L);
+        when(customerService.saveByDTO(any())).thenReturn(customerDTO);
+
+        mockMvc.perform(
+                post(CUSTOMERS_ENDPOINT)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(customerDTO))
+        )
+                .andExpect(status().isCreated())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().string(objectMapper.writeValueAsString(customerDTO)));
+
+        verify(customerService, times(1)).saveByDTO(any());
     }
 
-    void deleteCustomer() {
+    @Test
+    void updateCustomer_shouldReturnStatus204() throws Exception {
+        CustomerDTO customerDTO = EntityGenerator.getNewCustomerDTO();
+//        doNothing().when(customerService).updateByDTO(1, customerDTO);
+
+        mockMvc.perform(
+                patch(CUSTOMERS_ENDPOINT + "/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(customerDTO))
+        )
+                .andExpect(status().isNoContent());
+
+        verify(customerService, times(1)).updateByDTO(anyLong(), any());
+    }
+
+    @Test
+    void deleteCustomer_shouldReturnStatus204() throws Exception {
+
+        mockMvc.perform(
+                delete(CUSTOMERS_ENDPOINT + "/1"))
+                .andExpect(status().isNoContent());
+
+        verify(customerService, times(1)).delete(anyLong());
     }
 }
