@@ -35,7 +35,9 @@ public class EntityGenerator {
     public static Request getNewRequest() {
         log.info("IN getNewRequest()");
         Request request = new Request();
-        request.setInitiatedBy(getNewCustomer());
+        Customer customer = getNewCustomer();
+        customer.setId(1L);
+        request.setInitiatedBy(customer);
         request.setRequestedLanguage(getNativeLanguage());
         LocalDate now = LocalDate.now();
         request.setWishedStartTime(now.plusDays(1));

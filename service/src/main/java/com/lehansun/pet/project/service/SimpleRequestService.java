@@ -4,6 +4,8 @@ import com.lehansun.pet.project.api.dao.CustomerDao;
 import com.lehansun.pet.project.api.dao.LanguageDao;
 import com.lehansun.pet.project.api.dao.RequestDao;
 import com.lehansun.pet.project.api.service.RequestService;
+import com.lehansun.pet.project.model.Customer;
+import com.lehansun.pet.project.model.Language;
 import com.lehansun.pet.project.model.Request;
 import com.lehansun.pet.project.model.RequestSortType;
 import com.lehansun.pet.project.model.dto.RequestDTO;
@@ -40,8 +42,7 @@ public class SimpleRequestService extends AbstractService<Request> implements Re
     public List<RequestDTO> getAllDTOs() {
         List<Request> requests = getAll();
         java.lang.reflect.Type targetListType = new TypeToken<List<RequestDTO>>() {}.getType();
-        List<RequestDTO> requestDTOs = modelMapper.map(requests, targetListType);
-        return requestDTOs;
+        return modelMapper.map(requests, targetListType);
     }
 
     @Override
@@ -52,7 +53,7 @@ public class SimpleRequestService extends AbstractService<Request> implements Re
             return modelMapper.map(byId.get(), RequestDTO.class);
         } else {
             String message = String.format(ELEMENT_WITH_NON_EXISTENT_ID, id);
-            log.error(message);
+            log.warn(message);
             throw new RuntimeException(message);
         }
         
@@ -75,7 +76,7 @@ public class SimpleRequestService extends AbstractService<Request> implements Re
             requestDao.update(request);
         } else {
             String message = String.format(ELEMENT_WITH_NON_EXISTENT_ID, id);
-            log.error(message);
+            log.warn(message);
             throw new RuntimeException(message);
         }
     }
@@ -100,10 +101,21 @@ public class SimpleRequestService extends AbstractService<Request> implements Re
     }
 
     private void prepareToUpdate(RequestDTO requestDTO, Request request) {
-        request.setInitiatedBy(customerDao.getById(requestDTO.getInitiatedBy().getId()).get());
-        request.setAcceptedBy(customerDao.getById(requestDTO.getAcceptedBy().getId()).get());
-
-        request.setRequestedLanguage(languageDao.getById(requestDTO.getRequestedLanguage().getId()).get());
+        if (requestDTO.getInitiatedBy() != null) {
+            Long id = requestDTO.getInitiatedBy().getId();
+            Optional<Customer> optionalCustomer = customerDao.getById(id);
+            optionalCustomer.ifPresent(request::setInitiatedBy);
+        }
+        if (requestDTO.getAcceptedBy() != null) {
+            Long id = requestDTO.getAcceptedBy().getId();
+            Optional<Customer> optionalCustomer = customerDao.getById(id);
+            optionalCustomer.ifPresent(request::setInitiatedBy);
+        }
+        if (requestDTO.getRequestedLanguage() != null) {
+            Long id = requestDTO.getRequestedLanguage().getId();
+            Optional<Language> optionalLanguage = languageDao.getById(id);
+            optionalLanguage.ifPresent(request::setRequestedLanguage);
+        }
         request.setWishedStartTime(requestDTO.getWishedStartTime());
         request.setWishedEndTime(requestDTO.getWishedEndTime());
         request.setAcceptedStartTime(requestDTO.getAcceptedStartTime());

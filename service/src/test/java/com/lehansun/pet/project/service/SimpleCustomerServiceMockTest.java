@@ -25,23 +25,23 @@ class SimpleCustomerServiceMockTest {
     @Spy
     private ModelMapper modelMapper;
     @Mock
-    private CustomerDao customerDao;
+    private CustomerDao mockDao;
     @InjectMocks
-    private SimpleCustomerService customerService;
+    private SimpleCustomerService testingService;
 
     @Test
     void getAllDTOs() {
         // given
         Customer customer = EntityGenerator.getNewCustomer();
-        when(customerDao.getAll()).thenReturn(List.of(customer));
+        when(mockDao.getAll()).thenReturn(List.of(customer));
 
         // when
-        List<CustomerDTO> allDTOs = customerService.getAllDTOs();
+        List<CustomerDTO> allDTOs = testingService.getAllDTOs();
 
         //then
         assertEquals(1, allDTOs.size());
         assertEquals(customer.getEmail(), allDTOs.get(0).getEmail());
-        verify(customerDao, times(1)).getAll();
+        verify(mockDao, times(1)).getAll();
     }
 
     @Test
@@ -50,14 +50,14 @@ class SimpleCustomerServiceMockTest {
         long customerId = 1L;
         Customer customer = EntityGenerator.getNewCustomer();
         customer.setId(customerId);
-        when(customerDao.getById(customerId)).thenReturn(Optional.of(customer));
+        when(mockDao.getById(customerId)).thenReturn(Optional.of(customer));
 
         // when
-        CustomerDTO dto = customerService.getDtoById(customerId);
+        CustomerDTO dto = testingService.getDtoById(customerId);
 
         //then
         assertEquals(dto.getId(), customerId);
-        verify(customerDao, times(1)).getById(any());
+        verify(mockDao, times(1)).getById(any());
     }
 
     @Test()
@@ -67,12 +67,12 @@ class SimpleCustomerServiceMockTest {
         String message = "Element with id:-1 does not exist";
 
         // when
-        when(customerDao.getById(customerId)).thenReturn(Optional.empty());
+        when(mockDao.getById(customerId)).thenReturn(Optional.empty());
 
         //then
-        RuntimeException runtimeException = assertThrows(RuntimeException.class, () -> customerService.getDtoById(customerId));
+        RuntimeException runtimeException = assertThrows(RuntimeException.class, () -> testingService.getDtoById(customerId));
         assertEquals(message, runtimeException.getLocalizedMessage());
-        verify(customerDao, times(1)).getById(any());
+        verify(mockDao, times(1)).getById(any());
     }
 
     @Test
@@ -80,14 +80,14 @@ class SimpleCustomerServiceMockTest {
         // given
         Customer customer = EntityGenerator.getNewCustomer();
         String customerUsername = customer.getUsername();
-        when(customerDao.getByUsername(customerUsername)).thenReturn(Optional.of(customer));
+        when(mockDao.getByUsername(customerUsername)).thenReturn(Optional.of(customer));
 
         // when
-        CustomerDTO dto = customerService.getDtoByUsername(customerUsername);
+        CustomerDTO dto = testingService.getDtoByUsername(customerUsername);
 
         //then
         assertEquals(dto.getUsername(), customerUsername);
-        verify(customerDao, times(1)).getByUsername(anyString());
+        verify(mockDao, times(1)).getByUsername(anyString());
     }
 
     @Test
@@ -97,13 +97,13 @@ class SimpleCustomerServiceMockTest {
         String message = "Element with username-Non-existent username does not exist";
 
         // when
-        when(customerDao.getByUsername(customerUsername)).thenReturn(Optional.empty());
+        when(mockDao.getByUsername(customerUsername)).thenReturn(Optional.empty());
 
         //then
         RuntimeException runtimeException = assertThrows(RuntimeException.class,
-                () -> customerService.getDtoByUsername(customerUsername));
+                () -> testingService.getDtoByUsername(customerUsername));
         assertEquals(message, runtimeException.getLocalizedMessage());
-        verify(customerDao, times(1)).getByUsername(anyString());
+        verify(mockDao, times(1)).getByUsername(anyString());
     }
 
     @Test
@@ -112,10 +112,10 @@ class SimpleCustomerServiceMockTest {
         Customer customer = EntityGenerator.getNewCustomer();
 
         // when
-        customerService.save(customer);
+        testingService.save(customer);
 
         //then
-        verify(customerDao, times(1)).save(customer);
+        verify(mockDao, times(1)).save(customer);
     }
 
     @Test
@@ -124,9 +124,9 @@ class SimpleCustomerServiceMockTest {
         Customer customer = EntityGenerator.getNewCustomer();
 
         // when
-        customerService.update(customer);
+        testingService.update(customer);
 
         //then
-        verify(customerDao, times(1)).update(customer);
+        verify(mockDao, times(1)).update(customer);
     }
 }
