@@ -44,7 +44,7 @@ public class RequestController {
     @PostMapping
     public ResponseEntity<RequestDTO> createRequest(@RequestBody RequestDTO request) {
         log.debug("Received Post request: /requests");
-        return ResponseEntity.ok(requestService.saveByDTO(request));
+        return ResponseEntity.status(201).body(requestService.saveByDTO(request));
     }
 
     @PatchMapping("/{id}")

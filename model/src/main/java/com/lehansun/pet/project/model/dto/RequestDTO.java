@@ -19,4 +19,5 @@ public class RequestDTO {
     private LocalDate wishedStartTime;
     private LocalDate wishedEndTime;
     private LocalDate acceptedStartTime;
+
 }
