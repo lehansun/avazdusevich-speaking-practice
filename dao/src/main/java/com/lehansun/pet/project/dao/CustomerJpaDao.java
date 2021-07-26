@@ -41,8 +41,8 @@ public class CustomerJpaDao extends AbstractJpaDao<Customer> implements Customer
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Customer> criteriaQuery = criteriaBuilder.createQuery(Customer.class);
         Root<Customer> root = criteriaQuery.from(Customer.class);
-        criteriaQuery.select(root).where(criteriaBuilder.equal(root.get("username"), username));
-
+        CriteriaQuery<Customer> query = criteriaQuery.select(root).where(criteriaBuilder.equal(root.get("username"), username));
+        log.debug("IN getByUsername({}). CriteriaQuery created: {}.", username, query);
         return Optional.ofNullable(entityManager.createQuery(criteriaQuery).getResultList().get(0));
     }
 }

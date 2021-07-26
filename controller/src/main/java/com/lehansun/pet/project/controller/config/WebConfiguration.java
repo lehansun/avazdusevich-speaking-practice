@@ -1,6 +1,7 @@
 package com.lehansun.pet.project.controller.config;
 
 import com.lehansun.pet.project.dao.config.DaoConfiguration;
+import com.lehansun.pet.project.security.config.WebSecurityConfig;
 import com.lehansun.pet.project.service.config.ServiceConfig;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
@@ -9,7 +10,7 @@ public class WebConfiguration extends AbstractAnnotationConfigDispatcherServletI
 
     @Override
     protected Class<?>[] getRootConfigClasses() {
-        return new Class[] {DaoConfiguration.class, ServiceConfig.class, ServletConfig.class};
+        return new Class[] {DaoConfiguration.class, ServiceConfig.class, ServletConfig.class, WebSecurityConfig.class};
     }
 
     //    Указываем, какие классы необходимо использовать для конфигурации проекта
