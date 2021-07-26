@@ -17,7 +17,7 @@ public interface CustomerService extends GenericService<Customer> {
     /**
      * Finds all customers.
      *
-     * @return list of customerDTOs.
+     * @return list of customer DTOs.
      */
     List<CustomerDTO> getAllDTOs();
 
@@ -25,7 +25,7 @@ public interface CustomerService extends GenericService<Customer> {
      * Finds customer by Id.
      *
      * @param id customer Id.
-     * @return customerDTO.
+     * @return customer DTO.
      */
     CustomerDTO getDtoById(long id);
 
@@ -33,12 +33,12 @@ public interface CustomerService extends GenericService<Customer> {
      * Finds customer by username.
      *
      * @param username customer username.
-     * @return customerDTO.
+     * @return customer DTO.
      */
     CustomerDTO getDtoByUsername(String username);
 
     /**
-     * Save new customer.
+     * Creates and save new customer.
      *
      * @param customerDTO customer Data Transfer Object.
      * @return customerDTO with new assigned ID.
@@ -49,7 +49,7 @@ public interface CustomerService extends GenericService<Customer> {
      * Updates customer.
      *
      * @param id id of customer to update.
-     * @param customerDTO customerDTO.
+     * @param customerDTO customer DTO containing fields to update.
      */
     void updateByDTO(long id, CustomerDTO customerDTO);
 }

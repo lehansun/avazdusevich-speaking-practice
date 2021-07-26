@@ -65,7 +65,7 @@ public class AbstractService<T extends BaseEntity> implements GenericService<T> 
     /**
      * Save new entity.
      *
-     * @param element entity.
+     * @param element entity to save.
      */
     @Override
     public void save(T element) {
@@ -76,7 +76,7 @@ public class AbstractService<T extends BaseEntity> implements GenericService<T> 
     /**
      * Updates entity.
      *
-     * @param element entity.
+     * @param element entity to update.
      */
     @Override
     public void update(T element) {
@@ -87,7 +87,7 @@ public class AbstractService<T extends BaseEntity> implements GenericService<T> 
     /**
      * Deletes entity.
      *
-     * @param element entity.
+     * @param element entity to delete.
      */
     @Override
     public void delete(T element) {
@@ -98,7 +98,7 @@ public class AbstractService<T extends BaseEntity> implements GenericService<T> 
     /**
      * Deletes entity by Id.
      *
-     * @param id entity Id.
+     * @param id Id of entity to delete.
      */
     @Override
     public void delete(Long id) {

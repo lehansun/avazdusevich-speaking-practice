@@ -20,6 +20,13 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * An service class which provides interaction
+ * with the Request model.
+ *
+ * @author Aliaksei Vazdusevich
+ * @version 1.0
+ */
 @Slf4j
 @Service
 @Transactional
@@ -27,10 +34,29 @@ public class SimpleRequestService extends AbstractService<Request> implements Re
 
     public static final String UNKNOWN_SORTING_TYPE = "Failed to sort requests. Unknown sorting type: ";
 
+    /**
+     * A Request data access object.
+     */
     private final RequestDao requestDao;
+
+    /**
+     * A Customer data access object.
+     */
     private final CustomerDao customerDao;
+
+    /**
+     * A language data access object.
+     */
     private final LanguageDao languageDao;
 
+    /**
+     * Constructs new object with given DAOs and ModelMapper object.
+     *
+     * @param requestDao Request DAO.
+     * @param customerDao Customer DAO.
+     * @param languageDao Language DAO.
+     * @param modelMapper ModelMapper object.
+     */
     public SimpleRequestService(RequestDao requestDao, CustomerDao customerDao, LanguageDao languageDao, ModelMapper modelMapper) {
         super(requestDao, modelMapper);
         this.requestDao = requestDao;
@@ -38,6 +64,11 @@ public class SimpleRequestService extends AbstractService<Request> implements Re
         this.languageDao = languageDao;
     }
 
+    /**
+     * Finds all requests.
+     *
+     * @return list of request DTOs.
+     */
     @Override
     public List<RequestDTO> getAllDTOs() {
         List<Request> requests = getAll();
@@ -45,6 +76,12 @@ public class SimpleRequestService extends AbstractService<Request> implements Re
         return modelMapper.map(requests, targetListType);
     }
 
+    /**
+     * Finds request by Id.
+     *
+     * @param id request Id.
+     * @return request DTO.
+     */
     @Override
     public RequestDTO getDtoById(long id) {
 
@@ -59,6 +96,12 @@ public class SimpleRequestService extends AbstractService<Request> implements Re
         
     }
 
+    /**
+     * Creates and save new request.
+     *
+     * @param requestDTO request to save.
+     * @return request DTO with new assigned ID.
+     */
     @Override
     public RequestDTO saveByDTO(RequestDTO requestDTO) {
         Request request = modelMapper.map(requestDTO, Request.class);
@@ -67,6 +110,12 @@ public class SimpleRequestService extends AbstractService<Request> implements Re
         return requestDTO;
     }
 
+    /**
+     * Updates request.
+     *
+     * @param id id of request to update.
+     * @param requestDTO an object containing fields to update.
+     */
     @Override
     public void updateByDTO(long id, RequestDTO requestDTO) {
         Optional<Request> byId = getById(id);
@@ -81,6 +130,13 @@ public class SimpleRequestService extends AbstractService<Request> implements Re
         }
     }
 
+    /**
+     * Sorts list of requests
+     *
+     * @param dtoList  list of requests to sort
+     * @param sortType list sorting type
+     * @return sorted list of request DTOs
+     */
     @Override
     public List<RequestDTO> sort(List<RequestDTO> dtoList, RequestSortType sortType) {
         List<RequestDTO> sortedList = new ArrayList<>(dtoList);
@@ -100,6 +156,12 @@ public class SimpleRequestService extends AbstractService<Request> implements Re
         return sortedList;
     }
 
+    /**
+     * Prepare customer to update
+     *
+     * @param requestDTO an object containing fields to update.
+     * @param request request to update.
+     */
     private void prepareToUpdate(RequestDTO requestDTO, Request request) {
         if (requestDTO.getInitiatedBy() != null) {
             Long id = requestDTO.getInitiatedBy().getId();

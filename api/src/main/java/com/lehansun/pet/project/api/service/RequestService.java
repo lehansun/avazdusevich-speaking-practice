@@ -31,10 +31,10 @@ public interface RequestService extends GenericService<Request> {
     RequestDTO getDtoById(long id);
 
     /**
-     * Save new requestDTO.
+     * Creates and save new request.
      *
-     * @param requestDTO request Data Transfer Object.
-     * @return requestDTO with new assigned ID.
+     * @param requestDTO request to save.
+     * @return request DTO with new assigned ID.
      */
     RequestDTO saveByDTO(RequestDTO requestDTO);
 
@@ -42,16 +42,16 @@ public interface RequestService extends GenericService<Request> {
      * Updates request.
      *
      * @param id id of request to update.
-     * @param requestDTO requestDTO.
+     * @param requestDTO an object containing fields to update.
      */
     void updateByDTO(long id, RequestDTO requestDTO);
 
     /**
      * Sorts list of requests
      *
-     * @param dtoList sorting list
+     * @param dtoList list of requests to sort
      * @param sortType list sorting type
-     * @return sorted list of requestDTOs
+     * @return sorted list of request DTOs
      */
     List<RequestDTO> sort(List<RequestDTO> dtoList, RequestSortType sortType);
 }

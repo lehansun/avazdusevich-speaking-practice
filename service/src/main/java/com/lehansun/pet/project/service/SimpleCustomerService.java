@@ -4,7 +4,9 @@ import com.lehansun.pet.project.api.dao.CountryDao;
 import com.lehansun.pet.project.api.dao.CustomerDao;
 import com.lehansun.pet.project.api.dao.LanguageDao;
 import com.lehansun.pet.project.api.service.CustomerService;
+import com.lehansun.pet.project.model.Country;
 import com.lehansun.pet.project.model.Customer;
+import com.lehansun.pet.project.model.Language;
 import com.lehansun.pet.project.model.dto.CustomerDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -15,15 +17,41 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * An service class which provides interaction
+ * with the Customer model.
+ *
+ * @author Aliaksei Vazdusevich
+ * @version 1.0
+ */
 @Slf4j
 @Service
 @Transactional
 public class SimpleCustomerService extends AbstractService<Customer> implements CustomerService {
 
+    /**
+     * A Customer data access object.
+     */
     private final CustomerDao customerDao;
+
+    /**
+     * A Language data access object.
+     */
     private final LanguageDao languageDao;
+
+    /**
+     * A Country data access object.
+     */
     private final CountryDao countryDao;
 
+    /**
+     * Constructs new object with given DAOs and ModelMapper object.
+     *
+     * @param customerDao Customer DAO.
+     * @param languageDao Language DAO.
+     * @param countryDao Country DAO.
+     * @param modelMapper ModelMapper object.
+     */
     public SimpleCustomerService(CustomerDao customerDao, LanguageDao languageDao, CountryDao countryDao, ModelMapper modelMapper) {
         super(customerDao, modelMapper);
         this.customerDao = customerDao;
@@ -31,6 +59,11 @@ public class SimpleCustomerService extends AbstractService<Customer> implements 
         this.countryDao = countryDao;
     }
 
+    /**
+     * Finds all customers.
+     *
+     * @return list of customer DTOs.
+     */
     @Override
     public List<CustomerDTO> getAllDTOs() {
         List<Customer> customers = getAll();
@@ -38,6 +71,12 @@ public class SimpleCustomerService extends AbstractService<Customer> implements 
         return modelMapper.map(customers, targetListType);
     }
 
+    /**
+     * Finds customer by Id.
+     *
+     * @param id customer Id.
+     * @return customer DTO.
+     */
     @Override
     public CustomerDTO getDtoById(long id) {
         Optional<Customer> byId = getById(id);
@@ -50,6 +89,12 @@ public class SimpleCustomerService extends AbstractService<Customer> implements 
         }
     }
 
+    /**
+     * Finds customer by username.
+     *
+     * @param username customer username.
+     * @return customer DTO.
+     */
     @Override
     public CustomerDTO getDtoByUsername(String username) {
 
@@ -63,6 +108,12 @@ public class SimpleCustomerService extends AbstractService<Customer> implements 
         }
     }
 
+    /**
+     * Creates and save new customer.
+     *
+     * @param customerDTO customer to save.
+     * @return customer DTO with new assigned ID.
+     */
     @Transactional
     @Override
     public CustomerDTO saveByDTO(CustomerDTO customerDTO) {
@@ -72,6 +123,12 @@ public class SimpleCustomerService extends AbstractService<Customer> implements 
         return customerDTO;
     }
 
+    /**
+     * Updates customer.
+     *
+     * @param id Id of customer to update
+     * @param customerDTO an object containing fields to update.
+     */
     @Override
     public void updateByDTO(long id, CustomerDTO customerDTO) {
         Optional<Customer> byId = getById(id);
@@ -86,13 +143,31 @@ public class SimpleCustomerService extends AbstractService<Customer> implements 
         }
     }
 
+    /**
+     * Prepare customer to update
+     *
+     * @param customerDTO an object containing fields to update.
+     * @param customer customer to update.
+     */
     private void prepareToUpdate(CustomerDTO customerDTO, Customer customer) {
         customer.setFirstname(customerDTO.getFirstname());
         customer.setLastname(customerDTO.getLastname());
         customer.setEmail(customerDTO.getEmail());
-        customer.setLearningLanguage(languageDao.getById(customerDTO.getLearningLanguage().getId()).get());
-        customer.setNativeLanguage(languageDao.getById(customerDTO.getNativeLanguage().getId()).get());
         customer.setDateOfBirth(customerDTO.getDateOfBirth());
-        customer.setCountry(countryDao.getById(customerDTO.getCountry().getId()).get());
+        if (customerDTO.getLearningLanguage() != null) {
+            Long id = customerDTO.getLearningLanguage().getId();
+            Optional<Language> optionalLanguage = languageDao.getById(id);
+            optionalLanguage.ifPresent(customer::setLearningLanguage);
+        }
+        if (customerDTO.getNativeLanguage() != null) {
+            Long id = customerDTO.getNativeLanguage().getId();
+            Optional<Language> optionalLanguage = languageDao.getById(id);
+            optionalLanguage.ifPresent(customer::setNativeLanguage);
+        }
+        if (customerDTO.getCountry() != null) {
+            Long id = customerDTO.getCountry().getId();
+            Optional<Country> optionalCountry = countryDao.getById(id);
+            optionalCountry.ifPresent(customer::setCountry);
+        }
     }
 }
