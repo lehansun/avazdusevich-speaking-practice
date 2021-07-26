@@ -27,13 +27,19 @@ public class CustomerJpaDao extends AbstractJpaDao<Customer> implements Customer
     /**
      * Defines the class of manipulated entity.
      *
-     * @return dependent entity class.
+     * @return Customer.class.
      */
     @Override
     protected Class<Customer> getClazz() {
         return Customer.class;
     }
 
+    /**
+     * Finds customer by username.
+     *
+     * @param username customer's username.
+     * @return customer.
+     */
     @Override
     public Optional<Customer> getByUsername(String username) {
         log.debug(GET_BY_USERNAME_LOG_MESSAGE, getClazz().getSimpleName(), username);
@@ -42,7 +48,6 @@ public class CustomerJpaDao extends AbstractJpaDao<Customer> implements Customer
         CriteriaQuery<Customer> criteriaQuery = criteriaBuilder.createQuery(Customer.class);
         Root<Customer> root = criteriaQuery.from(Customer.class);
         CriteriaQuery<Customer> query = criteriaQuery.select(root).where(criteriaBuilder.equal(root.get("username"), username));
-        log.debug("IN getByUsername({}). CriteriaQuery created: {}.", username, query);
         return Optional.ofNullable(entityManager.createQuery(criteriaQuery).getResultList().get(0));
     }
 }

@@ -5,12 +5,51 @@ import com.lehansun.pet.project.model.dto.CustomerDTO;
 
 import java.util.List;
 
-
+/**
+ * A service interface that defines the methods
+ * of working with the Customer model.
+ *
+ * @author Aliaksei Vazdusevich
+ * @version 1.0
+ */
 public interface CustomerService extends GenericService<Customer> {
 
+    /**
+     * Finds all customers.
+     *
+     * @return list of customerDTOs.
+     */
     List<CustomerDTO> getAllDTOs();
+
+    /**
+     * Finds customer by Id.
+     *
+     * @param id customer Id.
+     * @return customerDTO.
+     */
     CustomerDTO getDtoById(long id);
-    CustomerDTO saveByDTO(CustomerDTO customerDTO);
+
+    /**
+     * Finds customer by username.
+     *
+     * @param username customer username.
+     * @return customerDTO.
+     */
     CustomerDTO getDtoByUsername(String username);
+
+    /**
+     * Save new customer.
+     *
+     * @param customerDTO customer Data Transfer Object.
+     * @return customerDTO with new assigned ID.
+     */
+    CustomerDTO saveByDTO(CustomerDTO customerDTO);
+
+    /**
+     * Updates customer.
+     *
+     * @param id id of customer to update.
+     * @param customerDTO customerDTO.
+     */
     void updateByDTO(long id, CustomerDTO customerDTO);
 }

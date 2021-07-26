@@ -13,5 +13,11 @@ import java.util.Optional;
  */
 public interface CustomerDao extends GenericDao<Customer>{
 
+    /**
+     * Finds customer by username.
+     *
+     * @param username customer's username.
+     * @return customer.
+     */
     Optional<Customer> getByUsername(String username);
 }

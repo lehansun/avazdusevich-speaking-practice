@@ -19,7 +19,7 @@ public interface GenericDao<T extends BaseEntity> {
     /**
      * Save new entity.
      *
-     * @param entity entity.
+     * @param entity entity to save.
      */
     void save(T entity);
 
@@ -41,7 +41,7 @@ public interface GenericDao<T extends BaseEntity> {
     /**
      * Updates entity.
      *
-     * @param entity entity.
+     * @param entity entity to update.
      * @return updated entity.
      */
     T update(T entity);
@@ -50,7 +50,7 @@ public interface GenericDao<T extends BaseEntity> {
     /**
      * Deletes entity.
      *
-     * @param entity entity.
+     * @param entity entity to delete.
      */
     void delete(T entity);
 }

@@ -18,7 +18,7 @@ public class RequestJpaDao extends AbstractJpaDao<Request> implements RequestDao
     /**
      * Defines the class of manipulated entity.
      *
-     * @return dependent entity class.
+     * @return Request.class.
      */
     @Override
     protected Class<Request> getClazz() {

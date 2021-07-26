@@ -34,28 +34,28 @@ public interface GenericService<T extends BaseEntity> {
     /**
      * Save new entity.
      *
-     * @param element entity.
+     * @param element entity to save.
      */
     void save(T element);
 
     /**
      * Updates entity.
      *
-     * @param element entity.
+     * @param element entity to update.
      */
     void update(T element);
 
     /**
      * Deletes entity.
      *
-     * @param element entity.
+     * @param element entity to delete.
      */
     void delete(T element);
 
     /**
      * Deletes entity by Id.
      *
-     * @param id entity Id.
+     * @param id Id of entity to delete.
      */
     void delete(Long id);
 }

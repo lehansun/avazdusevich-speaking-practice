@@ -79,7 +79,7 @@ public abstract class AbstractJpaDao<T extends BaseEntity> implements GenericDao
     /**
      * Updates entity.
      *
-     * @param entity entity.
+     * @param entity entity to update.
      * @return updated entity.
      */
     @Override
@@ -92,7 +92,7 @@ public abstract class AbstractJpaDao<T extends BaseEntity> implements GenericDao
     /**
      * Deletes entity.
      *
-     * @param entity entity.
+     * @param entity entity to delete.
      */
     @Override
     public void delete(T entity) {
