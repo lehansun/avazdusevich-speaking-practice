@@ -31,7 +31,7 @@ import java.util.Map;
  */
 @Slf4j
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/speaking-practice/auth")
 @RequiredArgsConstructor
 public class AuthenticationController {
 

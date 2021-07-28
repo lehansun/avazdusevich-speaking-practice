@@ -29,8 +29,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and().authorizeRequests()
-                .antMatchers("/").permitAll()
-                .antMatchers("/auth/login").permitAll()
+                .antMatchers("/speaking-practice/").permitAll()
+                .antMatchers("/speaking-practice/auth/login").permitAll()
                 .anyRequest().authenticated()
                 .and().apply(jwtConfigurer);
     }
