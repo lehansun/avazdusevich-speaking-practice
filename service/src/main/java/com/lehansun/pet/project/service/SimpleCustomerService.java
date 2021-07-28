@@ -8,6 +8,7 @@ import com.lehansun.pet.project.model.Country;
 import com.lehansun.pet.project.model.Customer;
 import com.lehansun.pet.project.model.Language;
 import com.lehansun.pet.project.model.dto.CustomerDTO;
+import com.lehansun.pet.project.model.dto.ExtendedSecureCustomerDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -18,7 +19,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * An service class which provides interaction
+ * A service class which provides interaction
  * with the Customer model.
  *
  * @author Aliaksei Vazdusevich
@@ -96,11 +97,11 @@ public class SimpleCustomerService extends AbstractService<Customer> implements 
      * @return customer DTO.
      */
     @Override
-    public CustomerDTO getDtoByUsername(String username) {
+    public ExtendedSecureCustomerDTO getDtoByUsername(String username) {
 
         Optional<Customer> byUsername = customerDao.getByUsername(username);
         if (byUsername.isPresent()) {
-            return modelMapper.map(byUsername.get(), CustomerDTO.class);
+            return modelMapper.map(byUsername.get(), ExtendedSecureCustomerDTO.class);
         } else {
             String message = String.format(ELEMENT_WITH_NON_EXISTENT_USERNAME, username);
             log.error(message);

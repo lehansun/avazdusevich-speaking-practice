@@ -16,14 +16,30 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+
+/**
+ * Rest controller for work with Customers.
+ *
+ * @author Aliaksei Vazdusevich
+ * @version 1.0
+ */
 @Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/customers")
 public class CustomerController {
 
+    /**
+     * Service layer object to get information about Customers.
+     */
     private final CustomerService service;
 
+
+    /**
+     * Finds all customers.
+     *
+     * @return ResponseEntity which contains a List of all found Customer DTOs.
+     */
     @GetMapping
     public ResponseEntity<List<CustomerDTO>> getAll() {
         log.debug("Received Get request: /customers");
@@ -32,25 +48,50 @@ public class CustomerController {
         return ResponseEntity.ok(dtoList);
     }
 
+    /**
+     * Finds customer with given ID.
+     *
+     * @param id customer ID.
+     * @return ResponseEntity which contains a looked for Customer DTO.
+     */
     @GetMapping("/{id}")
     public ResponseEntity<CustomerDTO> getById(@PathVariable Long id) {
         log.debug("Received Get request: /customers/" + id);
         return ResponseEntity.ok(service.getDtoById(id));
     }
 
+    /**
+     * Creates new customer.
+     *
+     * @param customerDTO customer.
+     * @return ResponseEntity which contains a customer DTO with new assigned ID.
+     */
     @PostMapping
-    public ResponseEntity<CustomerDTO> createCustomer(@RequestBody CustomerDTO customer) {
+    public ResponseEntity<CustomerDTO> createCustomer(@RequestBody CustomerDTO customerDTO) {
         log.info("Received Post request: /customers");
-        return ResponseEntity.status(201).body(service.saveByDTO(customer));
+        return ResponseEntity.status(201).body(service.saveByDTO(customerDTO));
     }
 
+    /**
+     * Updates an existing customer.
+     *
+     * @param customerDTO an object containing fields to update.
+     * @param id Id of customer to update
+     * @return ResponseEntity with status 204.
+     */
     @PatchMapping("/{id}")
-    public  ResponseEntity<Void> updateCustomer(@RequestBody CustomerDTO customer, @PathVariable("id") long id) {
+    public  ResponseEntity<Void> updateCustomer(@RequestBody CustomerDTO customerDTO, @PathVariable("id") long id) {
         log.info("Received patch request: /customers/" + id);
-        service.updateByDTO(id, customer);
+        service.updateByDTO(id, customerDTO);
         return ResponseEntity.noContent().build();
     }
 
+    /**
+     * Deletes customer from data source.
+     *
+     * @param id Id of customer to delete.
+     * @return ResponseEntity with status 204.
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCustomer(@PathVariable("id") long id) {
         log.debug("Received delete request: /customers/{}", id);

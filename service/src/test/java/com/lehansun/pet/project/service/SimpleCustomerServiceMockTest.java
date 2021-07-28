@@ -3,6 +3,7 @@ package com.lehansun.pet.project.service;
 import com.lehansun.pet.project.api.dao.CustomerDao;
 import com.lehansun.pet.project.model.Customer;
 import com.lehansun.pet.project.model.dto.CustomerDTO;
+import com.lehansun.pet.project.model.dto.ExtendedSecureCustomerDTO;
 import com.lehansun.pet.project.util.EntityGenerator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -83,7 +84,7 @@ class SimpleCustomerServiceMockTest {
         when(mockDao.getByUsername(customerUsername)).thenReturn(Optional.of(customer));
 
         // when
-        CustomerDTO dto = testingService.getDtoByUsername(customerUsername);
+        ExtendedSecureCustomerDTO dto = testingService.getDtoByUsername(customerUsername);
 
         //then
         assertEquals(dto.getUsername(), customerUsername);

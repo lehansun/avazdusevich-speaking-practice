@@ -16,17 +16,39 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/**
+ * Simple filter-class for authentication
+ *
+ * @author Aliaksei Vazdusevich
+ * @version 1.0
+ */
 @Component
 @RequiredArgsConstructor
 public class JwtTokenFilter extends GenericFilterBean {
 
+    /**
+     * Short message that the token is not valid.
+     */
     public static final String TOKEN_IS_EXPIRED_OR_INVALID = "JWT token is expired or invalid";
 
+    /**
+     * An object for creating and verifying JSON Web Tokens
+     */
     private final JwtTokenProvider jwtTokenProvider;
 
+    /**
+     * Checks user authentication
+     *
+     * @param request Servlet request
+     * @param response Servlet response
+     * @param filterChain Filter chain
+     *
+     * @throws IOException
+     * @throws ServletException
+     */
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
-        String token = jwtTokenProvider.resolveToken((HttpServletRequest) request);
+        String token = jwtTokenProvider.retrieveToken((HttpServletRequest) request);
 
         try {
             if (token != null && jwtTokenProvider.validateToken(token)) {

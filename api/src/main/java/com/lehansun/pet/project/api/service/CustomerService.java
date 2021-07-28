@@ -2,6 +2,7 @@ package com.lehansun.pet.project.api.service;
 
 import com.lehansun.pet.project.model.Customer;
 import com.lehansun.pet.project.model.dto.CustomerDTO;
+import com.lehansun.pet.project.model.dto.ExtendedSecureCustomerDTO;
 
 import java.util.List;
 
@@ -35,7 +36,7 @@ public interface CustomerService extends GenericService<Customer> {
      * @param username customer username.
      * @return customer DTO.
      */
-    CustomerDTO getDtoByUsername(String username);
+    ExtendedSecureCustomerDTO getDtoByUsername(String username);
 
     /**
      * Creates and save new customer.

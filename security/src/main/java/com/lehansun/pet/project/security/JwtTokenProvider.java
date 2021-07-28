@@ -14,7 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -22,6 +21,13 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Base64;
 import java.util.Date;
 
+/**
+ * This class contains methods for creating and verifying
+ * JSON Web Tokens using JJWT library.
+ *
+ * @author Aliaksei Vazdusevich
+ * @version 1.0
+ */
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -29,20 +35,46 @@ public class JwtTokenProvider {
 
     public static final String TOKEN_IS_EXPIRED_OR_INVALID = "JWT token is expired or invalid";
 
+    /**
+     * A secret key to compute the signature of JWT.
+     */
     @Value("${jwt.secret}")
     private String secretKey;
+
+    /**
+     * The name of the HTTP header used to transfer the token
+     */
     @Value("${jwt.header}")
     private String authorizationHeader;
+
+    /**
+     * Token validity time in milliseconds
+     */
     @Value("${jwt.expiration}")
     private Long validityInMilliseconds;
 
+
+    /**
+     * Service object to get information about Customers.
+     */
     private final CustomUserDetailsService userDetailsService;
 
+    /**
+     * Init-method for establishing the secret key
+     */
     @PostConstruct
     protected void init() {
         secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
     }
 
+
+    /**
+     * Creates JSON Web Token
+     *
+     * @param username username of authenticated customer
+     * @param role role of authenticated customer
+     * @return JSON Web Token
+     */
     public String createToken(String username, String role) {
         log.debug("IN createToken(). Trying to create token for user: {}.", username);
         Claims claims = Jwts.claims().setSubject(username);
@@ -59,6 +91,12 @@ public class JwtTokenProvider {
         return token;
     }
 
+    /**
+     * Checks a token for validity
+     *
+     * @param token JSON Web Token
+     * @return true if token is valid and false otherwise.
+     */
     public boolean validateToken(String token) {
         log.debug("IN validateToken(). Trying to validate token: " + token);
         try {
@@ -72,6 +110,12 @@ public class JwtTokenProvider {
         }
     }
 
+    /**
+     * Creates new Authentication.
+     *
+     * @param token JSON Web Token
+     * @return new Authentication.
+     */
     public Authentication getAuthentication(String token) {
         log.debug("IN getAuthentication().  Trying to get Authentication from token: {}.", token);
         String username = getUsername(token);
@@ -79,17 +123,26 @@ public class JwtTokenProvider {
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 
+    /**
+     * Retrieves username from token
+     *
+     * @param token JSON Web Token
+     * @return username
+     */
     public String getUsername(String token) {
         log.debug("IN getUsername(). Trying to get Username from token: {}", token);
         return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
     }
 
-    public String resolveToken(HttpServletRequest request) {
-        log.debug("IN resolveToken().  Trying to Resolve token from: {}", request);
-        log.debug("\tIN resolveToken().  Resolving by header: {}.", authorizationHeader);
-        String token = request.getHeader(authorizationHeader);
-        log.debug("\tIN resolveToken().  Resolved token: {}.", token);
-        return token;
+    /**
+     * Retrieves token from HttpServletRequest
+     *
+     * @param request HTTP request
+     * @return JSON Web Token
+     */
+    public String retrieveToken(HttpServletRequest request) {
+        log.debug("IN retrieveToken().");
+        return request.getHeader(authorizationHeader);
     }
 
 }
