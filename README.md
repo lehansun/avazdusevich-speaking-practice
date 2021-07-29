@@ -9,7 +9,8 @@ to practice the learning language.
 + [Build project](#Build-project)
 + [Deploy application on Tomcat server](#Deploy-application-on-Tomcat-server)
 + [Available REST endpoints](#Available-REST-endpoints)
-
+  + [customers](#Customers)
+  + [requests](#Requests)
 ## Environment setting
 ```
 install openjdk11
