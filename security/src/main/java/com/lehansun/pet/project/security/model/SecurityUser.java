@@ -6,6 +6,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -13,7 +14,7 @@ public class SecurityUser implements UserDetails {
 
     private String username;
     private String password;
-//    private Set<String> authorities;
+    private Set<String> roles;
 
     private boolean isActive = true;
 

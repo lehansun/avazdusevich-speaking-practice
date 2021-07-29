@@ -11,6 +11,7 @@ import javax.persistence.PersistenceContextType;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -85,6 +86,7 @@ public abstract class AbstractJpaDao<T extends BaseEntity> implements GenericDao
     @Override
     public T update(T entity) {
         log.debug(UPDATE_LOG_MESSAGE, getClazz().getSimpleName(), entity.getId());
+        entity.setUpdated(new Date());
         entityManager.merge(entity);
         return entity;
     }

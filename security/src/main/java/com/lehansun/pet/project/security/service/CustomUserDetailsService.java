@@ -2,6 +2,7 @@ package com.lehansun.pet.project.security.service;
 
 import com.lehansun.pet.project.api.dao.CustomerDao;
 import com.lehansun.pet.project.model.Customer;
+import com.lehansun.pet.project.model.Role;
 import com.lehansun.pet.project.security.model.SecurityUser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +13,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -36,7 +38,9 @@ public class CustomUserDetailsService implements UserDetailsService {
         SecurityUser securityUser = new SecurityUser();
         securityUser.setUsername(customer.getUsername());
         securityUser.setPassword(customer.getPassword());
-//        securityUser.getAuthorities(customer.getRoles())
+        securityUser.setRoles(customer.getRoles().stream()
+                .map(Role::getName)
+                .collect(Collectors.toSet()));
         return securityUser;
     }
 }

@@ -4,6 +4,8 @@ import com.lehansun.pet.project.api.service.CustomerService;
 import com.lehansun.pet.project.model.dto.ExtendedSecureCustomerDTO;
 import com.lehansun.pet.project.model.dto.SecureCustomerDTO;
 import com.lehansun.pet.project.security.JwtTokenProvider;
+import com.lehansun.pet.project.security.model.SecurityUser;
+import com.lehansun.pet.project.security.service.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -12,6 +14,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -31,7 +34,7 @@ import java.util.Map;
  */
 @Slf4j
 @RestController
-@RequestMapping("/speaking-practice/auth")
+@RequestMapping("/auth")
 @RequiredArgsConstructor
 public class AuthenticationController {
 
@@ -45,7 +48,7 @@ public class AuthenticationController {
     /**
      * Service layer object to get information about Customers.
      */
-    private final CustomerService customerService;
+    private final CustomUserDetailsService customerService;
 
     /**
      * Security layer object for creating and verifying JSON Web Tokens
@@ -63,11 +66,11 @@ public class AuthenticationController {
     public ResponseEntity<?> login(@RequestBody SecureCustomerDTO request) {
         try {
             log.debug("IN login. Get request: {}", request);
-            ExtendedSecureCustomerDTO byUsername = customerService.getDtoByUsername(request.getUsername());
+            SecurityUser byUsername = (SecurityUser) customerService.loadUserByUsername(request.getUsername());
             log.debug("IN login. Get customer from request: {}", byUsername);
             Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
             log.debug("IN login. Authentication created: {}", authentication);
-            String token = jwtTokenProvider.createToken(request.getUsername(), byUsername.getRoles().get(0).getName());
+            String token = jwtTokenProvider.createToken(request.getUsername(), byUsername.getRoles());
             log.debug("IN login. jwtToken created: {}", token);
 
             Map<Object, Object> response = new HashMap<>();

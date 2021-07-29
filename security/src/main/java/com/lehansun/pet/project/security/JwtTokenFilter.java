@@ -2,6 +2,7 @@ package com.lehansun.pet.project.security;
 
 import com.lehansun.pet.project.security.exception.JwtAuthenticationException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,6 +23,7 @@ import java.io.IOException;
  * @author Aliaksei Vazdusevich
  * @version 1.0
  */
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class JwtTokenFilter extends GenericFilterBean {
@@ -48,6 +50,7 @@ public class JwtTokenFilter extends GenericFilterBean {
      */
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
+        log.debug("IN doFilter()");
         String token = jwtTokenProvider.retrieveToken((HttpServletRequest) request);
 
         try {
@@ -56,8 +59,12 @@ public class JwtTokenFilter extends GenericFilterBean {
                 if (authentication != null) {
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                 }
+                log.debug("IN doFilter(). Request is authenticated.");
+            } else {
+                log.warn("IN doFilter(). Failed to retrieve token from request.");
             }
         } catch (JwtAuthenticationException e) {
+            log.warn("Failed to filter request. {}.", e.getLocalizedMessage());
             SecurityContextHolder.clearContext();
             ((HttpServletResponse) response).sendError(e.getHttpStatus().value());
             throw new JwtAuthenticationException(TOKEN_IS_EXPIRED_OR_INVALID, HttpStatus.FORBIDDEN);

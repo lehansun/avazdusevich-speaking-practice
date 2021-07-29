@@ -1,6 +1,7 @@
 package com.lehansun.pet.project.security;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.config.annotation.SecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.DefaultSecurityFilterChain;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Component;
  * @author Aliaksei Vazdusevich
  * @version 1.0
  */
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class JwtConfigurer extends SecurityConfigurerAdapter<DefaultSecurityFilterChain, HttpSecurity> {
@@ -22,6 +24,7 @@ public class JwtConfigurer extends SecurityConfigurerAdapter<DefaultSecurityFilt
 
     @Override
     public void configure(HttpSecurity builder) throws Exception {
+        log.debug("IN configure().");
         builder.addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
         super.configure(builder);
     }

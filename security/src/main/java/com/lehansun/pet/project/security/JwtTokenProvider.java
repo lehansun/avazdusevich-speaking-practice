@@ -20,6 +20,7 @@ import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Base64;
 import java.util.Date;
+import java.util.Set;
 
 /**
  * This class contains methods for creating and verifying
@@ -72,13 +73,13 @@ public class JwtTokenProvider {
      * Creates JSON Web Token
      *
      * @param username username of authenticated customer
-     * @param role role of authenticated customer
+     * @param roles roles of authenticated customer
      * @return JSON Web Token
      */
-    public String createToken(String username, String role) {
+    public String createToken(String username, Set<String> roles) {
         log.debug("IN createToken(). Trying to create token for user: {}.", username);
         Claims claims = Jwts.claims().setSubject(username);
-        claims.put("role", role);
+        claims.put("roles", roles);
         Date now = new Date();
         Date validity = new Date(now.getTime() + validityInMilliseconds * 1000);
         String token = Jwts.builder()

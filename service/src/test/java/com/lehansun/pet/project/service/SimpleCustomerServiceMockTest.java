@@ -84,7 +84,7 @@ class SimpleCustomerServiceMockTest {
         when(mockDao.getByUsername(customerUsername)).thenReturn(Optional.of(customer));
 
         // when
-        ExtendedSecureCustomerDTO dto = testingService.getDtoByUsername(customerUsername);
+        CustomerDTO dto = testingService.getDtoByUsername(customerUsername);
 
         //then
         assertEquals(dto.getUsername(), customerUsername);
