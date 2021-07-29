@@ -3,6 +3,7 @@ package com.lehansun.pet.project.service;
 import com.lehansun.pet.project.api.dao.CustomerDao;
 import com.lehansun.pet.project.api.dao.LanguageDao;
 import com.lehansun.pet.project.api.dao.RequestDao;
+import com.lehansun.pet.project.model.Customer;
 import com.lehansun.pet.project.model.Request;
 import com.lehansun.pet.project.model.dto.RequestDTO;
 import com.lehansun.pet.project.util.EntityGenerator;
@@ -136,7 +137,7 @@ class SimpleRequestServiceMockTest {
     void testDelete_shouldFailOnDeletingByNonExistentId() {
         // given
         Long id = 1L;
-        String message= "Failed to delete element id-" + id;
+        String message = "Failed to delete element id-" + id;
 
         // when
         when(mockDao.getById(id)).thenReturn(Optional.empty());
@@ -247,6 +248,40 @@ class SimpleRequestServiceMockTest {
         assertEquals(message, runtimeException.getLocalizedMessage());
         verify(mockDao, times(1)).getById(any());
         verifyNoMoreInteractions(mockDao);
+    }
+
+    @Test
+    void getDTOsInitiatedBy_shouldFailOnFindingWithNonExistentUsername() {
+        // given
+        String username = "Test";
+        String message= "Element with username-Test does not exist";
+
+        // when
+        when(customerDao.getByUsername(anyString())).thenReturn(Optional.empty());
+
+        //then
+        RuntimeException runtimeException = assertThrows(RuntimeException.class, () -> testingService.getDTOsInitiatedBy(username));
+        assertEquals(message, runtimeException.getLocalizedMessage());
+        verify(customerDao, times(1)).getByUsername(username);
+        verifyNoInteractions(mockDao);
+    }
+
+    @Test
+    void getDTOsInitiatedBy_shouldReturnListOfDTOs() {
+        // given
+        Customer customer = EntityGenerator.getNewCustomer();
+        Request request = EntityGenerator.getNewRequest();
+        when(mockDao.getByInitiator(customer)).thenReturn(List.of(request));
+        when(customerDao.getByUsername(customer.getUsername())).thenReturn(Optional.of(customer));
+
+        // when
+        List<RequestDTO> allDTOs = testingService.getDTOsInitiatedBy(customer.getUsername());
+
+        //then
+        assertEquals(1, allDTOs.size());
+        assertEquals(request.getWishedStartTime(), allDTOs.get(0).getWishedStartTime());
+        verify(mockDao, times(1)).getByInitiator(customer);
+        verify(customerDao, times(1)).getByUsername(anyString());
     }
 
 }

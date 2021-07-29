@@ -3,8 +3,10 @@ package com.lehansun.pet.project.dao;
 import com.lehansun.pet.project.api.dao.CustomerDao;
 import com.lehansun.pet.project.api.dao.RequestDao;
 import com.lehansun.pet.project.dao.config.DaoTestConfig;
+import com.lehansun.pet.project.model.Customer;
 import com.lehansun.pet.project.model.EntityStatus;
 import com.lehansun.pet.project.model.Request;
+import com.lehansun.pet.project.util.EntityGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -124,6 +126,28 @@ public class RequestJpaDaoTest {
         assertFalse(byId.isPresent());
     }
 
+    @Test
+    void getByInitiator_shouldReturnNotEmptyList() {
+        // when
+        Customer customer = customerDao.getAll().get(0);
+        List<Request> requests = requestDao.getByInitiator(customer);
+
+        //then
+        assertNotNull(requests);
+        assertTrue(requests.size() > 0);
+    }
+
+    @Test
+    void getByInitiator_shouldReturnEmptyList() {
+        // when
+        Customer customer = customerDao.getAll().get(1);
+        List<Request> requests = requestDao.getByInitiator(customer);
+
+        //then
+        assertNotNull(requests);
+        assertEquals(0, requests.size());
+    }
+
     private Request getNewRequest() {
         log.info("IN getNewRequest()");
         Request request = new Request();
@@ -134,5 +158,4 @@ public class RequestJpaDaoTest {
         request.setWishedEndTime(now.plusDays(2));
         return request;
     }
-
 }

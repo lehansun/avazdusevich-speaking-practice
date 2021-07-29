@@ -113,3 +113,18 @@ PATCH /requests/id
 ```
 DELETE /requests/id
 ```
+
+### Personal
+
+##### Get authenticated customer:
+```
+GET /me 
+```
+
+##### Get list of requests initiated by authenticated customer:
+```
+GET /me/requests 
+```
+
+
+
