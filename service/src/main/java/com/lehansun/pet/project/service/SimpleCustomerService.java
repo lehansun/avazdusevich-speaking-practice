@@ -67,6 +67,7 @@ public class SimpleCustomerService extends AbstractService<Customer> implements 
      */
     @Override
     public List<CustomerDTO> getAllDTOs() {
+        log.debug("IN getAllDTOs()");
         List<Customer> customers = getAll();
         java.lang.reflect.Type targetListType = new TypeToken<List<CustomerDTO>>() {}.getType();
         return modelMapper.map(customers, targetListType);
@@ -80,6 +81,7 @@ public class SimpleCustomerService extends AbstractService<Customer> implements 
      */
     @Override
     public CustomerDTO getDtoById(long id) {
+        log.debug("IN getDtoById({})", id);
         Optional<Customer> byId = getById(id);
         if (byId.isPresent()) {
             return modelMapper.map(byId.get(), CustomerDTO.class);
@@ -97,11 +99,12 @@ public class SimpleCustomerService extends AbstractService<Customer> implements 
      * @return customer DTO.
      */
     @Override
-    public ExtendedSecureCustomerDTO getDtoByUsername(String username) {
-
+    public CustomerDTO getDtoByUsername(String username) {
+        log.debug("IN getDtoByUsername({})", username);
         Optional<Customer> byUsername = customerDao.getByUsername(username);
         if (byUsername.isPresent()) {
-            return modelMapper.map(byUsername.get(), ExtendedSecureCustomerDTO.class);
+            log.debug("IN getDtoByUsername({}). Customer successfully found.", username);
+            return modelMapper.map(byUsername.get(), CustomerDTO.class);
         } else {
             String message = String.format(ELEMENT_WITH_NON_EXISTENT_USERNAME, username);
             log.error(message);
@@ -118,6 +121,7 @@ public class SimpleCustomerService extends AbstractService<Customer> implements 
     @Transactional
     @Override
     public CustomerDTO saveByDTO(CustomerDTO customerDTO) {
+        log.debug("IN saveByDTO({})", customerDTO);
         Customer customer = modelMapper.map(customerDTO, Customer.class);
         save(customer);
         customerDTO.setId(customer.getId());
@@ -132,6 +136,7 @@ public class SimpleCustomerService extends AbstractService<Customer> implements 
      */
     @Override
     public void updateByDTO(long id, CustomerDTO customerDTO) {
+        log.debug("IN updateByDTO({}, {})", id, customerDTO);
         Optional<Customer> byId = getById(id);
         if (byId.isPresent()) {
             Customer customer = byId.get();
@@ -151,6 +156,7 @@ public class SimpleCustomerService extends AbstractService<Customer> implements 
      * @param customer customer to update.
      */
     private void prepareToUpdate(CustomerDTO customerDTO, Customer customer) {
+        log.debug("IN prepareToUpdate()");
         customer.setFirstname(customerDTO.getFirstname());
         customer.setLastname(customerDTO.getLastname());
         customer.setEmail(customerDTO.getEmail());

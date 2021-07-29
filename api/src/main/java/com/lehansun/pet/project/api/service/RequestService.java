@@ -54,4 +54,12 @@ public interface RequestService extends GenericService<Request> {
      * @return sorted list of request DTOs
      */
     List<RequestDTO> sort(List<RequestDTO> dtoList, RequestSortType sortType);
+
+    /**
+     * Finds all requests initiated by certain customer.
+     *
+     * @param username username of customer who initiated requests.
+     * @return list of request DTOs.
+     */
+    List<RequestDTO> getDTOsInitiatedBy(String username);
 }

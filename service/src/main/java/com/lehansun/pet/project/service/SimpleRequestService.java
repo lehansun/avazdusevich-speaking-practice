@@ -85,6 +85,7 @@ public class SimpleRequestService extends AbstractService<Request> implements Re
     @Override
     public RequestDTO getDtoById(long id) {
 
+        log.debug("IN getDtoById({}).", id);
         Optional<Request> byId = getById(id);
         if (byId.isPresent()) {
             return modelMapper.map(byId.get(), RequestDTO.class);
@@ -104,6 +105,7 @@ public class SimpleRequestService extends AbstractService<Request> implements Re
      */
     @Override
     public RequestDTO saveByDTO(RequestDTO requestDTO) {
+        log.debug("IN saveByDTO({}).", requestDTO);
         Request request = modelMapper.map(requestDTO, Request.class);
         save(request);
         requestDTO.setId(request.getId());
@@ -118,6 +120,7 @@ public class SimpleRequestService extends AbstractService<Request> implements Re
      */
     @Override
     public void updateByDTO(long id, RequestDTO requestDTO) {
+        log.debug("IN updateByDTO({}, {}).", id, requestDTO);
         Optional<Request> byId = getById(id);
         if (byId.isPresent()) {
             Request request = byId.get();
@@ -139,6 +142,7 @@ public class SimpleRequestService extends AbstractService<Request> implements Re
      */
     @Override
     public List<RequestDTO> sort(List<RequestDTO> dtoList, RequestSortType sortType) {
+        log.debug("IN sort().");
         List<RequestDTO> sortedList = new ArrayList<>(dtoList);
         switch (sortType) {
             case BY_INITIATOR: sortedList.sort(Comparator.comparing(RequestDTO::getInitiatedBy));
@@ -154,6 +158,26 @@ public class SimpleRequestService extends AbstractService<Request> implements Re
                 throw new RuntimeException(UNKNOWN_SORTING_TYPE + sortType);
         }
         return sortedList;
+    }
+
+    /**
+     * Finds all requests initiated by certain customer.
+     *
+     * @param username username of customer who initiated requests.
+     * @return list of request DTOs.
+     */
+    @Override
+    public List<RequestDTO> getDTOsInitiatedBy(String username) {
+        log.debug("IN getInitiatedBy({}).", username);
+        Optional<Customer> optional = customerDao.getByUsername(username);
+        if (optional.isPresent()) {
+            java.lang.reflect.Type targetListType = new TypeToken<List<RequestDTO>>() {}.getType();
+            List<Request> requests = requestDao.getByInitiator(optional.get());
+            return modelMapper.map(requests, targetListType);
+        }
+        String message = String.format(ELEMENT_WITH_NON_EXISTENT_USERNAME, username);
+        log.warn(message);
+        throw new RuntimeException(message);
     }
 
     /**

@@ -36,7 +36,7 @@ public interface CustomerService extends GenericService<Customer> {
      * @param username customer username.
      * @return customer DTO.
      */
-    ExtendedSecureCustomerDTO getDtoByUsername(String username);
+    CustomerDTO getDtoByUsername(String username);
 
     /**
      * Creates and save new customer.

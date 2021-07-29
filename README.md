@@ -11,6 +11,7 @@ to practice the learning language.
 + [Available REST endpoints](#Available-REST-endpoints)
   + [customers](#Customers)
   + [requests](#Requests)
+  + [personal page](#Personal-page)
 ## Environment setting
 ```
 install openjdk11
@@ -113,3 +114,18 @@ PATCH /requests/id
 ```
 DELETE /requests/id
 ```
+
+### Personal page
+
+##### Get authenticated customer info:
+```
+GET /me 
+```
+
+##### Get list of requests initiated by authenticated customer:
+```
+GET /me/requests 
+```
+
+
+
