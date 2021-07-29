@@ -54,7 +54,8 @@ http://localhost:8080/speaking-practice/
 ```
 
 ## Available REST endpoints
-Then applications run on Tomcat server, the following endpoints are available:
+When applications run on Tomcat server, the following endpoints are available:
+
 ### Customers
 
 ##### Get list of customers:
@@ -82,32 +83,32 @@ DELETE /customers/id
 ```
 ### Requests
 
-Get list of requests:
-
-`GET /requests`
-
-Get sorted list of requests using type of sorting in the url:
-
-`GET /requests?sortType=BY_INITIATOR`
-
+##### Get list of requests:
+```
+GET /requests
+```
+##### Get sorted list of requests using type of sorting in the url:
+```
+GET /requests?sortType=BY_INITIATOR
+```
     BY_INITIATOR - sort by username of the customer who initiated the request 
     BY_ACCEPTOR - sort by username of the customer who accept the request 
     BY_START_TIME - sort by scheduled call start time
     BY_END_TIME - sort by scheduled call end time
 
-Get a specific request
-
-`GET /requests/id`
-
-Create a new request
-
-`POST /requests`
-
-Update a request
-
-`PATCH /requests/id`
-
-Delete a request
-
-`DELETE /requests/id`
-
+##### Get a specific request
+```
+GET /requests/id
+```
+##### Create a new request
+```
+POST /requests
+```
+##### Update a request
+```
+PATCH /requests/id
+```
+##### Delete a request
+```
+DELETE /requests/id
+```
