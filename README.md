@@ -130,6 +130,7 @@ GET /me/requests
 dateFrom (optional)
 ```dtd
 Specify the start of period for searching the list of requests.
+
     Pattern: "yyyy-MM-dd"
     Example: "2021-03-21"
     Example requests: "http://localhost:8080/speaking-practice/me/requests?dateFrom=2021-08-01"
