@@ -127,29 +127,29 @@ GET /me
 GET /me/requests 
 ```
 ###### Parameters
-####### dateFrom (optional)
+dateFrom (optional)
 ```dtd
-        Specify the start of period for searching the list of requests.
-
-        Pattern: "yyyy-MM-dd"
-        Example: "2021-03-21"
-        Example requests: "http://localhost:8080/speaking-practice/me/requests?dateFrom=2021-08-01"
+Specify the start of period for searching the list of requests.
+    Pattern: "yyyy-MM-dd"
+    Example: "2021-03-21"
+    Example requests: "http://localhost:8080/speaking-practice/me/requests?dateFrom=2021-08-01"
 ```
-####### dateTo (optional)
+dateTo (optional)
 ```dtd
 Specify the end of period for searching the list of requests.
         
-        Pattern: "yyyy-MM-dd"
-        Example: "2021-08-28"
-        Example requests: "http://localhost:8080/speaking-practice/me/requests?dateFrom=2021-08-01&dateTo=2021-08-13"
+    Pattern: "yyyy-MM-dd"
+    Example: "2021-08-28"
+    Example requests: "http://localhost:8080/speaking-practice/me/requests?dateFrom=2021-08-01&dateTo=2021-08-13"
 ```
-####### accepted (optional)
+accepted (optional)
 ```dtd
 Specify which requests should be included in the resulting list: accepted, not accepted or both.
-        - the not accepted requests will be included when set to false.
-        - the accepted requests will be included when set to false.
-        - both (accepted and not accepted) requests will be included when parameter not specified.
 
-        Example: "true"
-        Example requests: "http://localhost:8080/speaking-practice/me/requests?accepted=false"
+    - the accepted requests will be included when set to true.
+    - the not accepted requests will be included when set to false.
+    - both (accepted and not accepted) requests will be included when parameter not specified.
+
+    Example: "true"
+    Example requests: "http://localhost:8080/speaking-practice/me/requests?accepted=false"
 ```
