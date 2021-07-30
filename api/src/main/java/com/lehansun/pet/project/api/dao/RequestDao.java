@@ -3,6 +3,7 @@ package com.lehansun.pet.project.api.dao;
 import com.lehansun.pet.project.model.Customer;
 import com.lehansun.pet.project.model.Request;
 
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -15,10 +16,13 @@ import java.util.List;
 public interface RequestDao extends GenericDao<Request> {
 
     /**
-     * Finds all requests initiated by certain customer.
+     * Finds all requests initiated by certain customer for the specified period.
      *
      * @param customer customer who initiated requests.
-     * @return request list.
+     * @param dateFrom period start date.
+     * @param dateTo period end date.
+     * @param isAccepted the parameter displays whether the request should be accepted or not.
+     * @return list of requests.
      */
-    List<Request> getByInitiator(Customer customer);
+    List<Request> getByInitiator(Customer customer, LocalDate dateFrom, LocalDate dateTo, Boolean isAccepted);
 }

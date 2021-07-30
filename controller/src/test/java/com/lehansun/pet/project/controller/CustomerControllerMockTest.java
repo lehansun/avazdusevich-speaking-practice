@@ -33,8 +33,8 @@ class CustomerControllerMockTest {
 
     private static final String TESTING_ENDPOINT = "/customers";
 
-    ObjectMapper objectMapper = new ObjectMapper();
-    ModelMapper modelMapper = new ModelMapper();
+    private ObjectMapper objectMapper = new ObjectMapper();
+    private ModelMapper modelMapper = new ModelMapper();
 
     @Mock
     private CustomerService customerService;

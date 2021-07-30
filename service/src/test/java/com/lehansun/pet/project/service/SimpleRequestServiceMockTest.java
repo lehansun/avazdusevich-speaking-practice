@@ -260,7 +260,7 @@ class SimpleRequestServiceMockTest {
         when(customerDao.getByUsername(anyString())).thenReturn(Optional.empty());
 
         //then
-        RuntimeException runtimeException = assertThrows(RuntimeException.class, () -> testingService.getDTOsInitiatedBy(username));
+        RuntimeException runtimeException = assertThrows(RuntimeException.class, () -> testingService.getDTOsInitiatedBy(username, null, null, null));
         assertEquals(message, runtimeException.getLocalizedMessage());
         verify(customerDao, times(1)).getByUsername(username);
         verifyNoInteractions(mockDao);
@@ -271,16 +271,16 @@ class SimpleRequestServiceMockTest {
         // given
         Customer customer = EntityGenerator.getNewCustomer();
         Request request = EntityGenerator.getNewRequest();
-        when(mockDao.getByInitiator(customer)).thenReturn(List.of(request));
+        when(mockDao.getByInitiator(customer, null, null, null)).thenReturn(List.of(request));
         when(customerDao.getByUsername(customer.getUsername())).thenReturn(Optional.of(customer));
 
         // when
-        List<RequestDTO> allDTOs = testingService.getDTOsInitiatedBy(customer.getUsername());
+        List<RequestDTO> allDTOs = testingService.getDTOsInitiatedBy(customer.getUsername(), null, null, null);
 
         //then
         assertEquals(1, allDTOs.size());
         assertEquals(request.getWishedStartTime(), allDTOs.get(0).getWishedStartTime());
-        verify(mockDao, times(1)).getByInitiator(customer);
+        verify(mockDao, times(1)).getByInitiator(customer, null, null, null);
         verify(customerDao, times(1)).getByUsername(anyString());
     }
 

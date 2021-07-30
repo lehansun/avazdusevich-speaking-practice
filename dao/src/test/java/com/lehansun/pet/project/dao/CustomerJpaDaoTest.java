@@ -51,8 +51,8 @@ public class CustomerJpaDaoTest {
     }
 
     @Test
-    void shouldReturnNullWhenFindByNonexistentId() {
-        log.info("IN shouldReturnNullWhenFindByNonexistentId()");
+    void getById_shouldReturnEmptyOptionalObject() {
+        log.info("IN getById_shouldReturnEmptyOptionalObject()");
         // when
         Optional<Customer> byId = customerDao.getById(100L);
 
@@ -118,8 +118,8 @@ public class CustomerJpaDaoTest {
     }
 
     @Test
-    public void getByUsername() {
-        log.info("IN getByUsername()");
+    public void getByUsername_shouldFindUser() {
+        log.info("IN getByUsername_shouldFindUser() test.");
 
         // when
         Optional<Customer> byUsername = customerDao.getByUsername("Lehansun");
@@ -129,6 +129,45 @@ public class CustomerJpaDaoTest {
         assertEquals(customerDao.getAll().get(0), byUsername.get());
     }
 
+    @Test
+    public void getByUsername_shouldReturnEmptyOptionalObject() {
+        log.info("IN getByUsername_shouldReturnEmptyOptionalObject() test.");
+
+        // when
+        Optional<Customer> byUsername = customerDao.getByUsername("NonExistentUsername");
+
+        // then
+        assertTrue(byUsername.isEmpty());
+    }
 
 
+    @Test
+    void update_shouldUpdatePassword() {
+        String username = "Lehansun";
+        String testPassword = "testPassword";
+        String oldPassword = customerDao.getByUsername(username).get().getPassword();
+
+        // when
+        customerDao.updatePassword(username, testPassword);
+        String newPassword = customerDao.getByUsername(username).get().getPassword();
+
+        // then
+        assertNotEquals(oldPassword, newPassword);
+        assertEquals(testPassword, newPassword);
+    }
+
+    @Test
+    void  update_shouldFailOnPasswordUpdating() {
+        // given
+        String username = "NonExistentUsername";
+        String password = "password";
+        String message = "Incorrect username-" + username;
+
+        // when
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> customerDao.updatePassword(username, password));
+
+        // then
+        assertEquals(message, exception.getLocalizedMessage());
+    }
 }

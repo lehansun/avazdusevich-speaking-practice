@@ -4,6 +4,7 @@ import com.lehansun.pet.project.model.Request;
 import com.lehansun.pet.project.model.RequestSortType;
 import com.lehansun.pet.project.model.dto.RequestDTO;
 
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -56,10 +57,14 @@ public interface RequestService extends GenericService<Request> {
     List<RequestDTO> sort(List<RequestDTO> dtoList, RequestSortType sortType);
 
     /**
-     * Finds all requests initiated by certain customer.
+     * Finds all requests initiated by certain customer for the specified period.
      *
      * @param username username of customer who initiated requests.
+     * @param dateFrom period start date.
+     * @param dateTo period finish date.
+     * @param isAccepted the parameter displays whether the request should be accepted or not.
      * @return list of request DTOs.
      */
-    List<RequestDTO> getDTOsInitiatedBy(String username);
+    List<RequestDTO> getDTOsInitiatedBy(String username, LocalDate dateFrom, LocalDate dateTo, Boolean isAccepted);
+
 }

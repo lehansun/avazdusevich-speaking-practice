@@ -15,6 +15,7 @@ import org.modelmapper.TypeToken;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -161,18 +162,21 @@ public class SimpleRequestService extends AbstractService<Request> implements Re
     }
 
     /**
-     * Finds all requests initiated by certain customer.
+     * Finds all requests initiated by certain customer for the specified period.
      *
      * @param username username of customer who initiated requests.
+     * @param dateFrom period start date.
+     * @param dateTo period finish date.
+     * @param isAccepted the parameter displays whether the request should be accepted or not.
      * @return list of request DTOs.
      */
     @Override
-    public List<RequestDTO> getDTOsInitiatedBy(String username) {
-        log.debug("IN getInitiatedBy({}).", username);
+    public List<RequestDTO> getDTOsInitiatedBy(String username, LocalDate dateFrom, LocalDate dateTo, Boolean isAccepted) {
+        log.debug("IN getInitiatedBy({}, {}, {}, {}).", username, dateFrom, dateTo, isAccepted);
         Optional<Customer> optional = customerDao.getByUsername(username);
         if (optional.isPresent()) {
             java.lang.reflect.Type targetListType = new TypeToken<List<RequestDTO>>() {}.getType();
-            List<Request> requests = requestDao.getByInitiator(optional.get());
+            List<Request> requests = requestDao.getByInitiator(optional.get(), dateFrom, dateTo, isAccepted);
             return modelMapper.map(requests, targetListType);
         }
         String message = String.format(ELEMENT_WITH_NON_EXISTENT_USERNAME, username);

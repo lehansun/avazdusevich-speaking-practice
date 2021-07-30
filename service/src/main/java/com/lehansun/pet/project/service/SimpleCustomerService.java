@@ -8,7 +8,6 @@ import com.lehansun.pet.project.model.Country;
 import com.lehansun.pet.project.model.Customer;
 import com.lehansun.pet.project.model.Language;
 import com.lehansun.pet.project.model.dto.CustomerDTO;
-import com.lehansun.pet.project.model.dto.ExtendedSecureCustomerDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -147,6 +146,17 @@ public class SimpleCustomerService extends AbstractService<Customer> implements 
             log.error(message);
             throw new RuntimeException(message);
         }
+    }
+
+    /**
+     * Finds customer by username and updates his password.
+     *
+     * @param username customer's username.
+     * @param newPassword new password.
+     */
+    public void updatePassword(String username, String newPassword) {
+        log.debug("IN updatePassword({}): ", username);
+        customerDao.updatePassword(username, newPassword);
     }
 
     /**

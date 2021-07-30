@@ -20,4 +20,12 @@ public interface CustomerDao extends GenericDao<Customer>{
      * @return customer.
      */
     Optional<Customer> getByUsername(String username);
+
+    /**
+     * Finds customer by username and updates his password.
+     *
+     * @param username customer's username.
+     * @param newPassword new password.
+     */
+    void updatePassword(String username, String newPassword);
 }

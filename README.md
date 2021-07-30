@@ -122,10 +122,47 @@ DELETE /requests/id
 GET /me 
 ```
 
+##### Update authenticated customer password:
+```
+PUT /me/password
+
+JSON body parameter example: 
+    {    
+      "currentPassword": "123123123",
+      "newPassword": "234234234"
+    } 
+```
+
+
 ##### Get list of requests initiated by authenticated customer:
 ```
 GET /me/requests 
 ```
+###### Parameters
+dateFrom (optional)
+```dtd
+Specify the start of period for searching the list of requests.
 
+    Pattern: "yyyy-MM-dd"
+    Example: "2021-03-21"
+    Example requests: "http://localhost:8080/speaking-practice/me/requests?dateFrom=2021-08-01"
+```
+dateTo (optional)
+```dtd
+Specify the end of period for searching the list of requests.
+        
+    Pattern: "yyyy-MM-dd"
+    Example: "2021-08-28"
+    Example requests: "http://localhost:8080/speaking-practice/me/requests?dateFrom=2021-08-01&dateTo=2021-08-13"
+```
+accepted (optional)
+```dtd
+Specify which requests should be included in the resulting list: accepted, not accepted or both.
 
+    - the accepted requests will be included when set to true.
+    - the not accepted requests will be included when set to false.
+    - both (accepted and not accepted) requests will be included when parameter not specified.
 
+    Example: "true"
+    Example requests: "http://localhost:8080/speaking-practice/me/requests?accepted=false"
+```
