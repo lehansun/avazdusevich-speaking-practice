@@ -7,12 +7,15 @@ import com.lehansun.pet.project.model.dto.RequestDTO;
 import com.lehansun.pet.project.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -52,8 +55,7 @@ public class PersonalController {
     public ResponseEntity<CustomerDTO> get(HttpServletRequest request) {
         log.debug("Received Get request: /me");
 
-        String token = jwtTokenProvider.retrieveToken(request);
-        String username = jwtTokenProvider.getUsername(token);
+        String username = getUsername(request);
         CustomerDTO dtoByUsername = customerService.getDtoByUsername(username);
         return ResponseEntity.ok(dtoByUsername);
     }
@@ -65,13 +67,27 @@ public class PersonalController {
      * @return ResponseEntity which contains list of request DTOs.
      */
     @GetMapping("/requests")
-    public ResponseEntity<List<RequestDTO>> getRequests(HttpServletRequest request) {
+    public ResponseEntity<List<RequestDTO>> getRequests(
+            @RequestParam(value = "dateFrom", required = false)
+            @DateTimeFormat(pattern = "yyyy-MM-dd")
+                    LocalDate dateFrom,
+            @RequestParam(value = "dateTo", required = false)
+            @DateTimeFormat(pattern = "yyyy-MM-dd")
+                    LocalDate dateTo,
+            @RequestParam(value = "accepted", required = false)
+                    Boolean accepted,
+            HttpServletRequest request) {
         log.debug("Received Get request: /me/requests");
 
-        String token = jwtTokenProvider.retrieveToken(request);
-        String username = jwtTokenProvider.getUsername(token);
-        List<RequestDTO> requestDTOs = requestService.getDTOsInitiatedBy(username);
+        String username = getUsername(request);
+        List<RequestDTO> requestDTOs;
+        requestDTOs = requestService.getDTOsInitiatedBy(username, dateFrom, dateTo, accepted);
         return ResponseEntity.ok(requestDTOs);
+    }
+
+    private String getUsername(HttpServletRequest request) {
+        String token = jwtTokenProvider.retrieveToken(request);
+        return jwtTokenProvider.getUsername(token);
     }
 
 }

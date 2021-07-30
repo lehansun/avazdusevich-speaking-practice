@@ -6,7 +6,6 @@ import com.lehansun.pet.project.dao.config.DaoTestConfig;
 import com.lehansun.pet.project.model.Customer;
 import com.lehansun.pet.project.model.EntityStatus;
 import com.lehansun.pet.project.model.Request;
-import com.lehansun.pet.project.util.EntityGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -130,7 +129,7 @@ public class RequestJpaDaoTest {
     void getByInitiator_shouldReturnNotEmptyList() {
         // when
         Customer customer = customerDao.getAll().get(0);
-        List<Request> requests = requestDao.getByInitiator(customer);
+        List<Request> requests = requestDao.getByInitiator(customer, null, null, null);
 
         //then
         assertNotNull(requests);
@@ -141,7 +140,7 @@ public class RequestJpaDaoTest {
     void getByInitiator_shouldReturnEmptyList() {
         // when
         Customer customer = customerDao.getAll().get(1);
-        List<Request> requests = requestDao.getByInitiator(customer);
+        List<Request> requests = requestDao.getByInitiator(customer, null, null, null);
 
         //then
         assertNotNull(requests);

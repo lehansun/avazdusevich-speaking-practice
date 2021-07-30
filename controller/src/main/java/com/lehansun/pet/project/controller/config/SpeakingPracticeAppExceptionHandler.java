@@ -12,12 +12,18 @@ public class SpeakingPracticeAppExceptionHandler {
     @ExceptionHandler(JwtAuthenticationException.class)
     public ResponseEntity<String> authenticationExceptionHandler(JwtAuthenticationException e) {
         System.err.println(e.getLocalizedMessage());
-        return new ResponseEntity<>("Authentication denied: " + e.getLocalizedMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>("Authentication denied: " + e.getLocalizedMessage(), HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<String> unexpectedExceptionHandler(Exception e) {
         System.err.println(e.getLocalizedMessage());
         return new ResponseEntity<>("Unexpected: " + e.getLocalizedMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<String> illegalArgumentExceptionHandler(Exception e) {
+        System.err.println(e.getLocalizedMessage());
+        return new ResponseEntity<>("Illegal argument: " + e.getLocalizedMessage(), HttpStatus.BAD_REQUEST);
     }
 }
