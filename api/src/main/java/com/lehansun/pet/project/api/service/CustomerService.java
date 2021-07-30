@@ -53,4 +53,12 @@ public interface CustomerService extends GenericService<Customer> {
      * @param customerDTO customer DTO containing fields to update.
      */
     void updateByDTO(long id, CustomerDTO customerDTO);
+
+    /**
+     * Finds customer by username and updates his password.
+     *
+     * @param username customer's username.
+     * @param newPassword new password.
+     */
+    void updatePassword(String username, String newPassword);
 }

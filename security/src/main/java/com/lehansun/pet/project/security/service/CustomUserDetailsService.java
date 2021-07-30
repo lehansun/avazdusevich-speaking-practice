@@ -15,25 +15,51 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+/**
+ * A service class which provides interaction
+ * with the Customer model and map them to UserDetails objects.
+ *
+ * @author Aliaksei Vazdusevich
+ * @version 1.0
+ */
 @Slf4j
 @Service
 @Primary
 @RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
 
+    public static final String CUSTOMER_DON_T_EXIST_FORMATTER = "Customer don't exist. Username - %s.";
+
+    /**
+     * A Customer data access object.
+     */
     private final CustomerDao customerDao;
 
+    /**
+     * Finds customer by username.
+     *
+     * @param username customer's username.
+     * @return UserDetails object.
+     * @throws UsernameNotFoundException if customer doesn't exist.
+     */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<Customer> optionalCustomer = customerDao.getByUsername(username);
         if (optionalCustomer.isPresent()) {
             return fromDto(optionalCustomer.get());
         } else {
-            log.warn("Customer don't exist. Username - {}.", username);
-            throw new RuntimeException("Customer don't exist. Username - " + username);
+            String message = String.format(CUSTOMER_DON_T_EXIST_FORMATTER, username);
+            log.warn(message);
+            throw new IllegalArgumentException(message);
         }
     }
 
+    /**
+     * Mapping from Customer class to UserDetails class.
+     *
+     * @param customer mapped customer.
+     * @return UserDetails object.
+     */
     private UserDetails fromDto(Customer customer) {
         SecurityUser securityUser = new SecurityUser();
         securityUser.setUsername(customer.getUsername());

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -23,6 +24,8 @@ import java.util.Optional;
 public class CustomerJpaDao extends AbstractJpaDao<Customer> implements CustomerDao {
 
     private static final String GET_BY_USERNAME_LOG_MESSAGE = "IN getByUsername(), entity - {}, username - {}";
+    public static final String INCORRECT_USERNAME_FORMATTER = "Incorrect username-%s";
+    public static final String UPDATE_DEBUG_MESSAGE = "IN updatePassword(). Trying to update {}'s password.";
 
     /**
      * Defines the class of manipulated entity.
@@ -48,6 +51,27 @@ public class CustomerJpaDao extends AbstractJpaDao<Customer> implements Customer
         CriteriaQuery<Customer> criteriaQuery = criteriaBuilder.createQuery(Customer.class);
         Root<Customer> root = criteriaQuery.from(Customer.class);
         CriteriaQuery<Customer> query = criteriaQuery.select(root).where(criteriaBuilder.equal(root.get("username"), username));
-        return Optional.ofNullable(entityManager.createQuery(criteriaQuery).getResultList().get(0));
+        List<Customer> resultList = entityManager.createQuery(criteriaQuery).getResultList();
+        return resultList.isEmpty() ? Optional.empty() : Optional.of(resultList.get(0));
+    }
+
+    /**
+     * Finds customer by username and updates his password.
+     *
+     * @param username customer's username.
+     * @param newPassword new password.
+     */
+    @Override
+    public void updatePassword(String username, String newPassword) {
+        log.debug(UPDATE_DEBUG_MESSAGE, username);
+        Optional<Customer> byUsername = getByUsername(username);
+        if (byUsername.isPresent()) {
+            byUsername.get().setPassword(newPassword);
+            update(byUsername.get());
+        } else {
+            String message = String.format(INCORRECT_USERNAME_FORMATTER, username);
+            log.warn(message);
+            throw new IllegalArgumentException(message);
+        }
     }
 }

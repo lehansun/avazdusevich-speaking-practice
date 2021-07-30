@@ -122,6 +122,18 @@ DELETE /requests/id
 GET /me 
 ```
 
+##### Update authenticated customer password:
+```
+PUT /me/password
+
+JSON body parameter example: 
+    {    
+      "currentPassword": "123123123",
+      "newPassword": "234234234"
+    } 
+```
+
+
 ##### Get list of requests initiated by authenticated customer:
 ```
 GET /me/requests 
