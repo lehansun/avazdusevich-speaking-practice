@@ -104,10 +104,12 @@ public class SimpleRequestService extends AbstractService<Request> implements Re
      * @param requestDTO request to save.
      * @return request DTO with new assigned ID.
      */
+    @Transactional
     @Override
     public RequestDTO saveByDTO(RequestDTO requestDTO) {
         log.debug("IN saveByDTO({}).", requestDTO);
-        Request request = modelMapper.map(requestDTO, Request.class);
+        Request request = new Request();
+        prepareToUpdate(requestDTO, request);
         save(request);
         requestDTO.setId(request.getId());
         return requestDTO;
@@ -182,6 +184,31 @@ public class SimpleRequestService extends AbstractService<Request> implements Re
         String message = String.format(ELEMENT_WITH_NON_EXISTENT_USERNAME, username);
         log.warn(message);
         throw new RuntimeException(message);
+    }
+
+    /**
+     * Finds all requests initiated by any customer
+     * except certain customer specified in the parameters.
+     *
+     * @param username username of customer to exclude from search.
+     * @param dateFrom period start date.
+     * @param dateTo period finish date.
+     * @param languageName the name of requested language.
+     * @return list of request DTOs.
+     */
+    @Override
+    public List<RequestDTO> getOtherCustomersRequestDTOs(String username, LocalDate dateFrom, LocalDate dateTo, String languageName) {
+        log.debug("IN getOtherCustomersRequestDTOs({}, {}, {}, {}).", username, dateFrom, dateTo, languageName);
+        Optional<Customer> optional = customerDao.getByUsername(username);
+        if (optional.isPresent()) {
+            Language language = languageName == null ? null : languageDao.getByName(languageName).get();
+            java.lang.reflect.Type targetListType = new TypeToken<List<RequestDTO>>() {}.getType();
+            List<Request> requests = requestDao.getOtherCustomersRequests(optional.get(), dateFrom, dateTo, language);
+            return modelMapper.map(requests, targetListType);
+        }
+        String message = String.format(ELEMENT_WITH_NON_EXISTENT_USERNAME, username);
+        log.warn(message);
+        throw new IllegalArgumentException(message);
     }
 
     /**

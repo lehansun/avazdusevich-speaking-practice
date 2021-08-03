@@ -23,7 +23,7 @@ import java.util.Optional;
 @Repository
 public class CustomerJpaDao extends AbstractJpaDao<Customer> implements CustomerDao {
 
-    private static final String GET_BY_USERNAME_LOG_MESSAGE = "IN getByUsername(), entity - {}, username - {}";
+    private static final String GET_BY_USERNAME_LOG_MESSAGE = "IN getByUsername(), username - {}";
     public static final String INCORRECT_USERNAME_FORMATTER = "Incorrect username-%s";
     public static final String UPDATE_DEBUG_MESSAGE = "IN updatePassword(). Trying to update {}'s password.";
 
@@ -45,7 +45,7 @@ public class CustomerJpaDao extends AbstractJpaDao<Customer> implements Customer
      */
     @Override
     public Optional<Customer> getByUsername(String username) {
-        log.debug(GET_BY_USERNAME_LOG_MESSAGE, getClazz().getSimpleName(), username);
+        log.debug(GET_BY_USERNAME_LOG_MESSAGE, username);
 
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Customer> criteriaQuery = criteriaBuilder.createQuery(Customer.class);

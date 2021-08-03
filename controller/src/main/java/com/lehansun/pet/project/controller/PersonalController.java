@@ -98,6 +98,33 @@ public class PersonalController {
     }
 
     /**
+     * Finds list of requests.
+     *
+     * @param request HTTP request
+     * @param dateFrom period start date.
+     * @param dateTo period finish date.
+     * @param language the name of requested language.
+     * @return ResponseEntity which contains list of request DTOs.
+     */
+    @GetMapping("/find/requests")
+    public ResponseEntity<List<RequestDTO>> findRequests(
+            @RequestParam(value = "dateFrom", required = false)
+            @DateTimeFormat(pattern = "yyyy-MM-dd")
+                    LocalDate dateFrom,
+            @RequestParam(value = "dateTo", required = false)
+            @DateTimeFormat(pattern = "yyyy-MM-dd")
+                    LocalDate dateTo,
+            @RequestParam(value = "language", required = false)
+                    String language,
+            HttpServletRequest request) {
+        log.debug("Received Get request: /me/find/requests");
+
+        String username = getUsername(request);
+        List<RequestDTO> requestDTOs = requestService.getOtherCustomersRequestDTOs(username, dateFrom, dateTo, language);
+        return ResponseEntity.ok(requestDTOs);
+    }
+
+    /**
      * Updates the customer's password.
      *
      * @param request HTTP request.

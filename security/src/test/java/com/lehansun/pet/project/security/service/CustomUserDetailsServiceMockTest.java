@@ -9,6 +9,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.Optional;
 
@@ -50,7 +51,7 @@ class CustomUserDetailsServiceMockTest {
         when(customerDao.getByUsername(customerUsername)).thenReturn(Optional.empty());
 
         //then
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+        UsernameNotFoundException exception = assertThrows(UsernameNotFoundException.class,
                 () -> userDetailsService.loadUserByUsername(customerUsername));
         assertEquals(message, exception.getLocalizedMessage());
         verify(customerDao, times(1)).getByUsername(anyString());

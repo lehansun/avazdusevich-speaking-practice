@@ -1,5 +1,6 @@
 package com.lehansun.pet.project.api.service;
 
+import com.lehansun.pet.project.model.Language;
 import com.lehansun.pet.project.model.Request;
 import com.lehansun.pet.project.model.RequestSortType;
 import com.lehansun.pet.project.model.dto.RequestDTO;
@@ -67,4 +68,16 @@ public interface RequestService extends GenericService<Request> {
      */
     List<RequestDTO> getDTOsInitiatedBy(String username, LocalDate dateFrom, LocalDate dateTo, Boolean isAccepted);
 
+
+    /**
+     * Finds all requests initiated by any customer
+     * except certain customer specified in the parameters.
+     *
+     * @param username username of customer to exclude from search.
+     * @param dateFrom period start date.
+     * @param dateTo period finish date.
+     * @param language the name of requested language.
+     * @return list of request DTOs.
+     */
+    List<RequestDTO> getOtherCustomersRequestDTOs(String username, LocalDate dateFrom, LocalDate dateTo, String language);
 }
