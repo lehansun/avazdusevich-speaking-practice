@@ -1,6 +1,7 @@
 package com.lehansun.pet.project.api.dao;
 
 import com.lehansun.pet.project.model.Customer;
+import com.lehansun.pet.project.model.Language;
 import com.lehansun.pet.project.model.Request;
 
 import java.time.LocalDate;
@@ -25,4 +26,6 @@ public interface RequestDao extends GenericDao<Request> {
      * @return list of requests.
      */
     List<Request> getByInitiator(Customer customer, LocalDate dateFrom, LocalDate dateTo, Boolean isAccepted);
+
+    List<Request> getOtherCustomersRequests(Customer customerToExclude, LocalDate dateFrom, LocalDate dateTo, Language language);
 }

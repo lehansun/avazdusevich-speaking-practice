@@ -4,16 +4,20 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lehansun.pet.project.api.service.CustomerService;
 import com.lehansun.pet.project.controller.config.SpeakingPracticeAppExceptionHandler;
 import com.lehansun.pet.project.model.dto.CustomerDTO;
+import com.lehansun.pet.project.model.dto.CustomerDtoWithPassword;
 import com.lehansun.pet.project.util.EntityGenerator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -36,8 +40,11 @@ class CustomerControllerMockTest {
     private ObjectMapper objectMapper = new ObjectMapper();
     private ModelMapper modelMapper = new ModelMapper();
 
+
     @Mock
     private CustomerService customerService;
+    @Spy
+    private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(12);
 
     @InjectMocks
     private CustomerController customerController;
@@ -95,7 +102,7 @@ class CustomerControllerMockTest {
 
         mockMvc.perform(
                 get(TESTING_ENDPOINT + "/1"))
-                .andExpect(status().isInternalServerError())
+                .andExpect(status().isBadRequest())
                 .andExpect(mvcResult -> mvcResult.getResolvedException().getClass().equals(RuntimeException.class));
 
         verify(customerService, times(1)).getDtoById(1);
@@ -103,6 +110,7 @@ class CustomerControllerMockTest {
 
     @Test
     void createCustomer_shouldReturnStatus201andCustomerDTO() throws Exception {
+        CustomerDtoWithPassword dtoWithPassword = EntityGenerator.getNewCustomerDTOWithPassword();
         CustomerDTO customerDTO = EntityGenerator.getNewCustomerDTO();
         customerDTO.setId(1L);
         when(customerService.saveByDTO(any())).thenReturn(customerDTO);
@@ -110,7 +118,7 @@ class CustomerControllerMockTest {
         mockMvc.perform(
                 post(TESTING_ENDPOINT)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(customerDTO))
+                .content(objectMapper.writeValueAsString(dtoWithPassword))
         )
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -122,7 +130,6 @@ class CustomerControllerMockTest {
     @Test
     void updateCustomer_shouldReturnStatus204() throws Exception {
         CustomerDTO customerDTO = EntityGenerator.getNewCustomerDTO();
-//        doNothing().when(customerService).updateByDTO(1, customerDTO);
 
         mockMvc.perform(
                 patch(TESTING_ENDPOINT + "/1")

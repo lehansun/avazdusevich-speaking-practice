@@ -200,15 +200,14 @@ class SimpleRequestServiceMockTest {
     @Test
     void saveByDTO_shouldCallDaoSave() {
         // given
-        Long id = 1L;
         RequestDTO requestDTO = EntityGenerator.getNewRequestDTO();
-        requestDTO.setId(id);
 
         // when
-        RequestDTO saveByDTO = testingService.saveByDTO(requestDTO);
+        when(customerDao.getById(anyLong())).thenReturn(Optional.empty());
+        when(languageDao.getById(anyLong())).thenReturn(Optional.empty());
 
         // then
-        assertEquals(id, saveByDTO.getId());
+        assertThrows(NullPointerException.class, () -> testingService.saveByDTO(requestDTO));
         verify(mockDao, times(1)).save(any());
     }
 

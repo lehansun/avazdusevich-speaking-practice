@@ -5,6 +5,7 @@ import com.lehansun.pet.project.model.Language;
 import com.lehansun.pet.project.model.Request;
 import com.lehansun.pet.project.model.Role;
 import com.lehansun.pet.project.model.dto.CustomerDTO;
+import com.lehansun.pet.project.model.dto.CustomerDtoWithPassword;
 import com.lehansun.pet.project.model.dto.RequestDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -83,4 +84,9 @@ public class EntityGenerator {
         return roles;
     }
 
+    public static CustomerDtoWithPassword getNewCustomerDTOWithPassword() {
+        log.info("IN CustomerDtoWithPassword()");
+        Customer newCustomer = getNewCustomer();
+        return new ModelMapper().map(newCustomer, CustomerDtoWithPassword.class);
+    }
 }

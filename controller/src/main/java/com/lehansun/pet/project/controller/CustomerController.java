@@ -2,9 +2,11 @@ package com.lehansun.pet.project.controller;
 
 import com.lehansun.pet.project.api.service.CustomerService;
 import com.lehansun.pet.project.model.dto.CustomerDTO;
+import com.lehansun.pet.project.model.dto.CustomerDtoWithPassword;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -33,6 +35,8 @@ public class CustomerController {
      * Service layer object to get information about Customers.
      */
     private final CustomerService service;
+
+    private final PasswordEncoder encoder;
 
 
     /**
@@ -67,8 +71,9 @@ public class CustomerController {
      * @return ResponseEntity which contains a customer DTO with new assigned ID.
      */
     @PostMapping
-    public ResponseEntity<CustomerDTO> createCustomer(@RequestBody CustomerDTO customerDTO) {
+    public ResponseEntity<CustomerDTO> createCustomer(@RequestBody CustomerDtoWithPassword customerDTO) {
         log.info("Received Post request: /customers");
+        customerDTO.setPassword(encoder.encode(customerDTO.getPassword()));
         return ResponseEntity.status(201).body(service.saveByDTO(customerDTO));
     }
 

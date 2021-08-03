@@ -8,6 +8,7 @@ import com.lehansun.pet.project.model.Country;
 import com.lehansun.pet.project.model.Customer;
 import com.lehansun.pet.project.model.Language;
 import com.lehansun.pet.project.model.dto.CustomerDTO;
+import com.lehansun.pet.project.model.dto.CustomerDtoWithPassword;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -119,18 +120,18 @@ public class SimpleCustomerService extends AbstractService<Customer> implements 
      */
     @Transactional
     @Override
-    public CustomerDTO saveByDTO(CustomerDTO customerDTO) {
+    public CustomerDTO saveByDTO(CustomerDtoWithPassword customerDTO) {
         log.debug("IN saveByDTO({})", customerDTO);
         Customer customer = modelMapper.map(customerDTO, Customer.class);
         save(customer);
         customerDTO.setId(customer.getId());
-        return customerDTO;
+        return modelMapper.map(customerDTO, CustomerDTO.class);
     }
 
     /**
      * Updates customer.
      *
-     * @param id Id of customer to update
+     * @param id ID of customer to update
      * @param customerDTO an object containing fields to update.
      */
     @Override

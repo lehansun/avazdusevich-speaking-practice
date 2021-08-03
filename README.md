@@ -133,29 +133,28 @@ JSON body parameter example:
     } 
 ```
 
-
 ##### Get list of requests initiated by authenticated customer:
 ```
 GET /me/requests 
 ```
 ###### Parameters
-dateFrom (optional)
+* dateFrom (optional)
 ```dtd
 Specify the start of period for searching the list of requests.
 
     Pattern: "yyyy-MM-dd"
     Example: "2021-03-21"
-    Example requests: "http://localhost:8080/speaking-practice/me/requests?dateFrom=2021-08-01"
+    Example request: "http://localhost:8080/speaking-practice/me/requests?dateFrom=2021-08-01"
 ```
-dateTo (optional)
+* dateTo (optional)
 ```dtd
 Specify the end of period for searching the list of requests.
         
     Pattern: "yyyy-MM-dd"
     Example: "2021-08-28"
-    Example requests: "http://localhost:8080/speaking-practice/me/requests?dateFrom=2021-08-01&dateTo=2021-08-13"
+    Example request: "http://localhost:8080/speaking-practice/me/requests?dateFrom=2021-08-01&dateTo=2021-08-13"
 ```
-accepted (optional)
+* accepted (optional)
 ```dtd
 Specify which requests should be included in the resulting list: accepted, not accepted or both.
 
@@ -164,5 +163,48 @@ Specify which requests should be included in the resulting list: accepted, not a
     - both (accepted and not accepted) requests will be included when parameter not specified.
 
     Example: "true"
-    Example requests: "http://localhost:8080/speaking-practice/me/requests?accepted=false"
+    Example request: "http://localhost:8080/speaking-practice/me/requests?accepted=false"
 ```
+##### Creates new request for authenticated customer:
+```
+POST /me/requests
+
+JSON body parameter example: 
+   {    
+     "wishedStartTime": [2021, 8, 6],
+     "wishedEndTime":   [2021, 8, 7]
+   } 
+```
+##### Finds list of requests initiated by any customer excluded authenticated customer:
+```
+GET /me/find/requests
+```
+###### Parameters
+* dateFrom (optional)
+```dtd
+Specify the start of period for searching the list of requests.
+
+    Pattern: "yyyy-MM-dd"
+    Example: "2021-03-21"
+    Example request: "http://localhost:8080/speaking-practice/me/find/requests?dateFrom=2021-08-01"
+```
+* dateTo (optional)
+```dtd
+Specify the end of period for searching the list of requests.
+        
+    Pattern: "yyyy-MM-dd"
+    Example: "2021-08-28"
+    Example request: "http://localhost:8080/speaking-practice/me/find/requests?dateFrom=2021-08-01&dateTo=2021-08-13"
+```
+* language (optional)
+```dtd
+Specify the language for searching the list of requests.
+
+    Example requests: "http://localhost:8080/speaking-practice/me/find/requests?dateFrom=2021-08-01&dateTo=2021-08-13&language=english"
+```
+
+##### Finds the request by ID and set it accepted by authenticated customer:
+```
+PUT /me/find/requests/{id}
+```
+

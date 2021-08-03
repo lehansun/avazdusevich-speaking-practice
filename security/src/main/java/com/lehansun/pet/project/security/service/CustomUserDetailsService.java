@@ -50,7 +50,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         } else {
             String message = String.format(CUSTOMER_DON_T_EXIST_FORMATTER, username);
             log.warn(message);
-            throw new IllegalArgumentException(message);
+            throw new UsernameNotFoundException(message);
         }
     }
 

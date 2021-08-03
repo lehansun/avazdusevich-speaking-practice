@@ -13,14 +13,19 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * This class contains methods for creating and verifying
@@ -52,7 +57,7 @@ public class JwtTokenProvider {
      * Token validity time in milliseconds
      */
     @Value("${jwt.expiration}")
-    private Long validityInMilliseconds;
+    private Long validityInSeconds;
 
 
     /**
@@ -78,13 +83,12 @@ public class JwtTokenProvider {
      */
     public String createToken(String username, Set<String> roles) {
         log.debug("IN createToken(). Trying to create token for user: {}.", username);
-        Claims claims = Jwts.claims().setSubject(username);
-        claims.put("roles", roles);
         Date now = new Date();
-        Date validity = new Date(now.getTime() + validityInMilliseconds * 1000);
+        Date validity = new Date(now.getTime() + validityInSeconds * 1000);
         String token = Jwts.builder()
-                .setClaims(claims)
+                .setSubject(username)
                 .setIssuedAt(now)
+                .claim("roles", String.join(",", roles))
                 .setExpiration(validity)
                 .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
@@ -101,8 +105,9 @@ public class JwtTokenProvider {
     public boolean validateToken(String token) {
         log.debug("IN validateToken(). Trying to validate token: " + token);
         try {
+            boolean isSigned = Jwts.parser().setSigningKey(secretKey).isSigned(token);
             Jws<Claims> claimsJws = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
-            boolean isValid = !claimsJws.getBody().getExpiration().before(new Date());
+            boolean isValid = isSigned && !isExpired(claimsJws);
             log.debug("\tIN validateToken(). Is token valid: {}.", isValid);
             return isValid;
         } catch (JwtException | IllegalArgumentException e) {
@@ -136,6 +141,18 @@ public class JwtTokenProvider {
     }
 
     /**
+     * Retrieves authorities from token
+     *
+     * @param token JSON Web Token
+     * @return List of GrantedAuthorities
+     */
+    public List<GrantedAuthority> getAuthorities(String token) {
+        log.debug("IN getAuthorities(). Trying to get Username from token: {}", token);
+        String roles = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().get("roles", String.class);
+        return Arrays.stream(roles.split(",")).map(SimpleGrantedAuthority::new).collect(Collectors.toList());
+    }
+
+    /**
      * Retrieves token from HttpServletRequest
      *
      * @param request HTTP request
@@ -144,6 +161,22 @@ public class JwtTokenProvider {
     public String retrieveToken(HttpServletRequest request) {
         log.debug("IN retrieveToken().");
         return request.getHeader(authorizationHeader);
+    }
+
+    /**
+     * Checks the token is expired
+     *
+     * @param claimsJws JSON Web Token claims
+     * @return true if token is expired and false otherwise.
+     */
+    private boolean isExpired(Jws<Claims> claimsJws) {
+        log.debug("IN isNotExpired().");
+        Date expiration = claimsJws.getBody().getExpiration();
+        Date issuedAt = claimsJws.getBody().getIssuedAt();
+        Date now = new Date();
+        long duration = (expiration.getTime() - issuedAt.getTime()) / 1000;
+        return issuedAt.after(now) && expiration.before(now) && duration != validityInSeconds;
+
     }
 
 }

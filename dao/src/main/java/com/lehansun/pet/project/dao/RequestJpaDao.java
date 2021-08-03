@@ -2,6 +2,7 @@ package com.lehansun.pet.project.dao;
 
 import com.lehansun.pet.project.api.dao.RequestDao;
 import com.lehansun.pet.project.model.Customer;
+import com.lehansun.pet.project.model.Language;
 import com.lehansun.pet.project.model.Request;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
@@ -48,6 +49,33 @@ public class RequestJpaDao extends AbstractJpaDao<Request> implements RequestDao
         predicates.add(criteriaBuilder.equal(request.get("initiatedBy"), customer));
         addPeriodPredicates(dateFrom, dateTo, criteriaBuilder, request, predicates);
         addAcceptorPredicate(isAccepted, criteriaBuilder, request, predicates);
+        CriteriaQuery<Request> query = criteriaQuery.select(request).where(predicates.toArray(new Predicate[]{}));
+        return entityManager.createQuery(criteriaQuery).getResultList();
+    }
+
+    /**
+     * Finds all requests initiated by any customer
+     * except certain customer specified in the parameters.
+     *
+     * @param customerToExclude customer to exclude from search.
+     * @param dateFrom period start date.
+     * @param dateTo period end date.
+     * @param language the requested language.
+     * @return list of requests.
+     */
+    @Override
+    public List<Request> getOtherCustomersRequests(Customer customerToExclude, LocalDate dateFrom, LocalDate dateTo, Language language) {
+        log.debug("IN getOtherCustomersRequests({}, {}, {}).",customerToExclude.getUsername(), dateFrom, dateTo);
+
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Request> criteriaQuery = criteriaBuilder.createQuery(Request.class);
+        Root<Request> request = criteriaQuery.from(Request.class);
+
+        List<Predicate> predicates = new ArrayList<>();
+        predicates.add(criteriaBuilder.notEqual(request.get("initiatedBy"), customerToExclude));
+        addPeriodPredicates(dateFrom, dateTo, criteriaBuilder, request, predicates);
+        addAcceptorPredicate(false, criteriaBuilder, request, predicates);
+        addLanguagePredicate(language, criteriaBuilder, request, predicates);
         CriteriaQuery<Request> query = criteriaQuery.select(request).where(predicates.toArray(new Predicate[]{}));
         return entityManager.createQuery(criteriaQuery).getResultList();
     }
@@ -110,6 +138,13 @@ public class RequestJpaDao extends AbstractJpaDao<Request> implements RequestDao
                 predicates.add(criteriaBuilder.isNotNull(request.get("acceptedBy")));
 
             }
+        }
+    }
+
+    private void addLanguagePredicate(Language language, CriteriaBuilder criteriaBuilder, Root<Request> request, List<Predicate> predicates) {
+        if (language != null) {
+            log.debug("Requested language is specified: {}.", language.getName());
+            predicates.add(criteriaBuilder.equal(request.get("requestedLanguage"), language));
         }
     }
 

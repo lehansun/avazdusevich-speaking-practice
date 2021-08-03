@@ -9,6 +9,7 @@ import com.lehansun.pet.project.model.Language;
 import com.lehansun.pet.project.model.Request;
 import com.lehansun.pet.project.model.RequestSortType;
 import com.lehansun.pet.project.model.dto.RequestDTO;
+import com.lehansun.pet.project.model.dto.SimpleRequestDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -19,6 +20,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -34,7 +36,8 @@ import java.util.Optional;
 public class SimpleRequestService extends AbstractService<Request> implements RequestService {
 
     public static final String UNKNOWN_SORTING_TYPE = "Failed to sort requests. Unknown sorting type: ";
-
+    public static final String REQUEST_ALREADY_ACCEPTED_FORMATTER = "Request-%d already accepted or deleted.";
+    public static final String ACCEPTANCE_DENIED = "Acceptance denied.";
     /**
      * A Request data access object.
      */
@@ -104,11 +107,13 @@ public class SimpleRequestService extends AbstractService<Request> implements Re
      * @param requestDTO request to save.
      * @return request DTO with new assigned ID.
      */
+    @Transactional
     @Override
     public RequestDTO saveByDTO(RequestDTO requestDTO) {
         log.debug("IN saveByDTO({}).", requestDTO);
-        Request request = modelMapper.map(requestDTO, Request.class);
-        save(request);
+        Request request = new Request();
+        prepareToUpdate(requestDTO, request);
+        requestDao.save(request);
         requestDTO.setId(request.getId());
         return requestDTO;
     }
@@ -182,6 +187,109 @@ public class SimpleRequestService extends AbstractService<Request> implements Re
         String message = String.format(ELEMENT_WITH_NON_EXISTENT_USERNAME, username);
         log.warn(message);
         throw new RuntimeException(message);
+    }
+
+    /**
+     * Finds all requests initiated by any customer
+     * except certain customer specified in the parameters.
+     *
+     * @param username username of customer to exclude from search.
+     * @param dateFrom period start date.
+     * @param dateTo period finish date.
+     * @param languageName the name of requested language.
+     * @return list of request DTOs.
+     */
+    @Override
+    public List<RequestDTO> getOtherCustomersRequestDTOs(String username, LocalDate dateFrom, LocalDate dateTo, String languageName) {
+        log.debug("IN getOtherCustomersRequestDTOs({}, {}, {}, {}).", username, dateFrom, dateTo, languageName);
+        Optional<Customer> optional = customerDao.getByUsername(username);
+        if (optional.isPresent()) {
+            Language language = languageName == null ? null : languageDao.getByName(languageName).get();
+            java.lang.reflect.Type targetListType = new TypeToken<List<RequestDTO>>() {}.getType();
+            List<Request> requests = requestDao.getOtherCustomersRequests(optional.get(), dateFrom, dateTo, language);
+            return modelMapper.map(requests, targetListType);
+        }
+        String message = String.format(ELEMENT_WITH_NON_EXISTENT_USERNAME, username);
+        log.warn(message);
+        throw new IllegalArgumentException(message);
+    }
+
+    /**
+     * Finds the request by id and set it accepted
+     * by customer with specified username
+     *
+     * @param requestId id of request to accept
+     * @param username username of customer how accept the request
+     */
+    @Override
+    public void attemptToSetAccepted(long requestId, String username) {
+        log.debug("IN attemptToSetAccepted(request-{}, {}).", username, requestId);
+        Optional<Customer> optionalCustomer = customerDao.getByUsername(username);
+        Optional<Request> optionalRequest = getById(requestId);
+        if (optionalRequest.isPresent()) {
+            Request request = optionalRequest.get();
+            if (request.getAcceptedBy() == null) {
+                optionalCustomer.ifPresent(customer -> setAccepted(customer, request));
+            } else {
+                String message = String.format(REQUEST_ALREADY_ACCEPTED_FORMATTER, requestId);
+                log.warn(message);
+                throw new RuntimeException(message);
+            }
+        }
+    }
+
+    /**
+     * Finds the customer by username and attempt to create new request for him
+     *
+     * @param dto an object containing payload
+     * @param username username of customer who create the request
+     */
+    @Override
+    public RequestDTO attemptToCreateRequest(String username, SimpleRequestDTO dto) {
+        log.debug("In attemptToCreateRequest({}, {})", username, dto);
+        Optional<Customer> optionalCustomer = customerDao.getByUsername(username);
+        if (optionalCustomer.isPresent()) {
+            Request request = createRequest(dto, optionalCustomer.get());
+            save(request);
+            return modelMapper.map(request, RequestDTO.class);
+        }
+        String message = String.format(ELEMENT_WITH_NON_EXISTENT_USERNAME, username);
+        log.warn(message);
+        throw new IllegalArgumentException(message);
+    }
+
+    /**
+     * Creates new request for specified customer
+     *
+     * @param dto an object containing payload
+     * @param customer customer who create the request
+     */
+    private Request createRequest(SimpleRequestDTO dto, Customer customer) {
+        log.debug("In createRequest({}, {})", dto, customer.getUsername());
+        Request request = new Request();
+        request.setInitiatedBy(customer);
+        request.setRequestedLanguage(customer.getLearningLanguage());
+        request.setWishedStartTime(dto.getWishedStartTime());
+        request.setWishedEndTime(dto.getWishedEndTime());
+        return request;
+    }
+
+    /**
+     * Set request accepted for specified customer
+     *
+     * @param customer customer
+     * @param request request
+     */
+    private void setAccepted(Customer customer, Request request) {
+        log.debug("IN setAccepted({}, request-{}).", customer.getUsername(), request.getId());
+        if (!Objects.equals(customer.getId(), request.getInitiatedBy().getId())
+                && customer.getNativeLanguage().equals(request.getRequestedLanguage())) {
+            request.setAcceptedBy(customer);
+            update(request);
+        } else {
+            log.warn(ACCEPTANCE_DENIED);
+            throw new IllegalArgumentException(ACCEPTANCE_DENIED);
+        }
     }
 
     /**
