@@ -12,6 +12,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -98,7 +100,7 @@ public class PersonalController {
     }
 
     /**
-     * Finds list of requests.
+     * Finds list of requests initiated by other customers.
      *
      * @param request HTTP request
      * @param dateFrom period start date.
@@ -122,6 +124,21 @@ public class PersonalController {
         String username = getUsername(request);
         List<RequestDTO> requestDTOs = requestService.getOtherCustomersRequestDTOs(username, dateFrom, dateTo, language);
         return ResponseEntity.ok(requestDTOs);
+    }
+
+    /**
+     * Finds the request by id and set it accepted
+     * by authenticated customer
+     *
+     * @param id ID of request to accept
+     * @param request HTTP request
+     * @return ResponseEntity with status 202 (Accepted)
+     */
+    @PostMapping("/find/requests/{id}")
+    public ResponseEntity<Object> accept(@PathVariable("id") long id, HttpServletRequest request) {
+        String username = getUsername(request);
+        requestService.attemptToSetAccepted(id, username);
+        return ResponseEntity.accepted().build();
     }
 
     /**

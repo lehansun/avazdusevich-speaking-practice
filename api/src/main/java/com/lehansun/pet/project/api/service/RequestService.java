@@ -1,6 +1,5 @@
 package com.lehansun.pet.project.api.service;
 
-import com.lehansun.pet.project.model.Language;
 import com.lehansun.pet.project.model.Request;
 import com.lehansun.pet.project.model.RequestSortType;
 import com.lehansun.pet.project.model.dto.RequestDTO;
@@ -25,7 +24,7 @@ public interface RequestService extends GenericService<Request> {
     List<RequestDTO> getAllDTOs();
 
     /**
-     * Finds request by Id.
+     * Finds request by ID.
      *
      * @param id request Id.
      * @return requestDTO.
@@ -80,4 +79,13 @@ public interface RequestService extends GenericService<Request> {
      * @return list of request DTOs.
      */
     List<RequestDTO> getOtherCustomersRequestDTOs(String username, LocalDate dateFrom, LocalDate dateTo, String language);
+
+    /**
+     * Finds the request by id and set it accepted
+     * by customer with specified username
+     *
+     * @param requestId id of request to accept
+     * @param username username of customer how accept the request
+     */
+    void attemptToSetAccepted(long requestId, String username);
 }

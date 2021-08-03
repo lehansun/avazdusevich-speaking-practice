@@ -19,6 +19,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -34,7 +35,8 @@ import java.util.Optional;
 public class SimpleRequestService extends AbstractService<Request> implements RequestService {
 
     public static final String UNKNOWN_SORTING_TYPE = "Failed to sort requests. Unknown sorting type: ";
-
+    public static final String REQUEST_ALREADY_ACCEPTED_FORMATTER = "Request-%d already accepted or deleted.";
+    public static final String ACCEPTANCE_DENIED = "Acceptance denied.";
     /**
      * A Request data access object.
      */
@@ -209,6 +211,48 @@ public class SimpleRequestService extends AbstractService<Request> implements Re
         String message = String.format(ELEMENT_WITH_NON_EXISTENT_USERNAME, username);
         log.warn(message);
         throw new IllegalArgumentException(message);
+    }
+
+    /**
+     * Finds the request by id and set it accepted
+     * by customer with specified username
+     *
+     * @param requestId id of request to accept
+     * @param username username of customer how accept the request
+     */
+    @Override
+    public void attemptToSetAccepted(long requestId, String username) {
+        log.debug("IN attemptToSetAccepted(request-{}, {}).", username, requestId);
+        Optional<Customer> optionalCustomer = customerDao.getByUsername(username);
+        Optional<Request> optionalRequest = getById(requestId);
+        if (optionalRequest.isPresent()) {
+            Request request = optionalRequest.get();
+            if (request.getAcceptedBy() == null) {
+                optionalCustomer.ifPresent(customer -> setAccepted(customer, request));
+            } else {
+                String message = String.format(REQUEST_ALREADY_ACCEPTED_FORMATTER, requestId);
+                log.warn(message);
+                throw new RuntimeException(message);
+            }
+        }
+    }
+
+    /**
+     * Set request accepted by specified customer
+     *
+     * @param customer customer
+     * @param request request
+     */
+    private void setAccepted(Customer customer, Request request) {
+        log.debug("IN setAccepted({}, request-{}).", customer.getUsername(), request.getId());
+        if (!Objects.equals(customer.getId(), request.getInitiatedBy().getId())
+                && customer.getNativeLanguage().equals(request.getRequestedLanguage())) {
+            request.setAcceptedBy(customer);
+            update(request);
+        } else {
+            log.warn(ACCEPTANCE_DENIED);
+            throw new IllegalArgumentException(ACCEPTANCE_DENIED);
+        }
     }
 
     /**

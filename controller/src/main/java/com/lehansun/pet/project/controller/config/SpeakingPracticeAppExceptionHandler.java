@@ -19,7 +19,7 @@ public class SpeakingPracticeAppExceptionHandler {
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<String> unexpectedExceptionHandler(Exception e) {
         System.err.println(e.getLocalizedMessage());
-        return new ResponseEntity<>("Unexpected: " + e.getLocalizedMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>("Unexpected: " + e.getLocalizedMessage(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
