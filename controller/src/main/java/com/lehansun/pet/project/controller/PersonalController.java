@@ -5,11 +5,13 @@ import com.lehansun.pet.project.api.service.RequestService;
 import com.lehansun.pet.project.model.dto.CustomerDTO;
 import com.lehansun.pet.project.model.dto.PasswordDTO;
 import com.lehansun.pet.project.model.dto.RequestDTO;
+import com.lehansun.pet.project.model.dto.SimpleRequestDTO;
 import com.lehansun.pet.project.security.JwtPasswordValidator;
 import com.lehansun.pet.project.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -99,6 +101,14 @@ public class PersonalController {
         return ResponseEntity.ok(requestDTOs);
     }
 
+    @PostMapping("/requests")
+    public ResponseEntity<RequestDTO> createRequest(HttpServletRequest request,
+                                                    @RequestBody SimpleRequestDTO dto) {
+        String username = getUsername(request);
+        requestService.attemptToCreateRequest(username, dto);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
     /**
      * Finds list of requests initiated by other customers.
      *
@@ -134,12 +144,14 @@ public class PersonalController {
      * @param request HTTP request
      * @return ResponseEntity with status 202 (Accepted)
      */
-    @PostMapping("/find/requests/{id}")
+    @PutMapping("/find/requests/{id}")
     public ResponseEntity<Object> accept(@PathVariable("id") long id, HttpServletRequest request) {
         String username = getUsername(request);
         requestService.attemptToSetAccepted(id, username);
         return ResponseEntity.accepted().build();
     }
+
+
 
     /**
      * Updates the customer's password.

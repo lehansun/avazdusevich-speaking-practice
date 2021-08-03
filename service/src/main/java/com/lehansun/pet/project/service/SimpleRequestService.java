@@ -9,6 +9,7 @@ import com.lehansun.pet.project.model.Language;
 import com.lehansun.pet.project.model.Request;
 import com.lehansun.pet.project.model.RequestSortType;
 import com.lehansun.pet.project.model.dto.RequestDTO;
+import com.lehansun.pet.project.model.dto.SimpleRequestDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -238,7 +239,43 @@ public class SimpleRequestService extends AbstractService<Request> implements Re
     }
 
     /**
-     * Set request accepted by specified customer
+     * Finds the customer by username and attempt to create new request for him
+     *
+     * @param dto an object containing payload
+     * @param username username of customer who create the request
+     */
+    @Override
+    public RequestDTO attemptToCreateRequest(String username, SimpleRequestDTO dto) {
+        log.debug("In attemptToCreateRequest({}, {})", username, dto);
+        Optional<Customer> optionalCustomer = customerDao.getByUsername(username);
+        if (optionalCustomer.isPresent()) {
+            Request request = createRequest(dto, optionalCustomer.get());
+            save(request);
+            return modelMapper.map(request, RequestDTO.class);
+        }
+        String message = String.format(ELEMENT_WITH_NON_EXISTENT_USERNAME, username);
+        log.warn(message);
+        throw new IllegalArgumentException(message);
+    }
+
+    /**
+     * Creates new request for specified customer
+     *
+     * @param dto an object containing payload
+     * @param customer customer who create the request
+     */
+    private Request createRequest(SimpleRequestDTO dto, Customer customer) {
+        log.debug("In createRequest({}, {})", dto, customer.getUsername());
+        Request request = new Request();
+        request.setInitiatedBy(customer);
+        request.setRequestedLanguage(customer.getLearningLanguage());
+        request.setWishedStartTime(dto.getWishedStartTime());
+        request.setWishedEndTime(dto.getWishedEndTime());
+        return request;
+    }
+
+    /**
+     * Set request accepted for specified customer
      *
      * @param customer customer
      * @param request request

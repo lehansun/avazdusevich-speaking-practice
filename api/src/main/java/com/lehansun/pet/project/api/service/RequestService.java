@@ -3,6 +3,7 @@ package com.lehansun.pet.project.api.service;
 import com.lehansun.pet.project.model.Request;
 import com.lehansun.pet.project.model.RequestSortType;
 import com.lehansun.pet.project.model.dto.RequestDTO;
+import com.lehansun.pet.project.model.dto.SimpleRequestDTO;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -88,4 +89,13 @@ public interface RequestService extends GenericService<Request> {
      * @param username username of customer how accept the request
      */
     void attemptToSetAccepted(long requestId, String username);
+
+    /**
+     * Finds the customer by username and attempt to create new request for him
+     *
+     * @param dto an object containing payload
+     * @param username username of customer who create the request
+     */
+    RequestDTO attemptToCreateRequest(String username, SimpleRequestDTO dto);
+
 }
