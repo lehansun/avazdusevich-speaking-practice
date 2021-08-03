@@ -113,7 +113,7 @@ public class SimpleRequestService extends AbstractService<Request> implements Re
         log.debug("IN saveByDTO({}).", requestDTO);
         Request request = new Request();
         prepareToUpdate(requestDTO, request);
-        save(request);
+        requestDao.save(request);
         requestDTO.setId(request.getId());
         return requestDTO;
     }

@@ -93,13 +93,13 @@ class RequestControllerMockTest {
     }
 
     @Test
-    void getById_shouldThrowRuntimeExceptionAndStatus500() throws Exception {
+    void getById_shouldThrowRuntimeExceptionAndStatus400() throws Exception {
 
         when(requestService.getDtoById(anyLong())).thenThrow(new RuntimeException("Element does not exist"));
 
         mockMvc.perform(
                 get(TESTING_ENDPOINT + "/1"))
-                .andExpect(status().isInternalServerError())
+                .andExpect(status().isBadRequest())
                 .andExpect(mvcResult -> mvcResult.getResolvedException().getClass().equals(RuntimeException.class));
 
         verify(requestService, times(1)).getDtoById(anyLong());

@@ -102,7 +102,7 @@ class CustomerControllerMockTest {
 
         mockMvc.perform(
                 get(TESTING_ENDPOINT + "/1"))
-                .andExpect(status().isInternalServerError())
+                .andExpect(status().isBadRequest())
                 .andExpect(mvcResult -> mvcResult.getResolvedException().getClass().equals(RuntimeException.class));
 
         verify(customerService, times(1)).getDtoById(1);
