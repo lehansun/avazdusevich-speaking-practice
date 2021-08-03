@@ -101,12 +101,20 @@ public class PersonalController {
         return ResponseEntity.ok(requestDTOs);
     }
 
+    /**
+     * Finds the customer by username and create new request for him
+     *
+     * @param request HTTP request
+     * @param dto an object containing payload
+     * @return ResponseEntity with new RequestDTO and status 201
+     */
     @PostMapping("/requests")
     public ResponseEntity<RequestDTO> createRequest(HttpServletRequest request,
                                                     @RequestBody SimpleRequestDTO dto) {
         String username = getUsername(request);
-        requestService.attemptToCreateRequest(username, dto);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(requestService.attemptToCreateRequest(username, dto));
     }
 
     /**
@@ -151,8 +159,6 @@ public class PersonalController {
         return ResponseEntity.accepted().build();
     }
 
-
-
     /**
      * Updates the customer's password.
      *
@@ -171,7 +177,6 @@ public class PersonalController {
         }
         return ResponseEntity.badRequest().build();
     }
-
 
     /**
      * Extracts customers username from HTTP request
