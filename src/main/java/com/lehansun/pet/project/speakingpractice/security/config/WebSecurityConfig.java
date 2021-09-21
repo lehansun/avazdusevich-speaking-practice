@@ -1,0 +1,50 @@
+package com.lehansun.pet.project.speakingpractice.security.config;
+
+import com.lehansun.pet.project.speakingpractice.security.JwtConfigurer;
+import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
+
+@EnableWebSecurity(debug = true)
+@RequiredArgsConstructor
+@PropertySource("classpath:/application.properties")
+@ComponentScan({"com.lehansun.pet.project.speakingpractice"})
+public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+
+    private final JwtConfigurer jwtConfigurer;
+
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http
+                .csrf().disable()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and().authorizeRequests()
+                .antMatchers("/auth/**").permitAll()
+                .antMatchers("/customers/").hasRole("ADMIN")
+                .antMatchers("/requests/").hasRole("ADMIN")
+                .anyRequest().authenticated()
+//                .and().addFilter(new JwtAuthorizationFilter(authenticationManagerBean(), jwtTokenProvider, userDetailsService))
+                .and().apply(jwtConfigurer);
+    }
+
+    @Bean
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder(12);
+    }
+
+}

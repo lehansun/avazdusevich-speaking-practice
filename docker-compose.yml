@@ -1,0 +1,26 @@
+version: '3.7'
+
+#networks:
+#  default:
+#    name: speaking_practice_app
+#
+#volumes:
+#  speaking_practice_db:
+
+########################################################################################################################
+#### Data base
+########################################################################################################################
+services:
+  speaking_practice_db:
+    container_name: speaking_practice_db
+    image: mysql:latest
+    ports:
+      - "3306:3306"
+    volumes:
+      - /home/aleksei/IdeaProjects/speaking-practice/database:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=user
+      - MYSQL_DATABASE=speaking_practice_app
+    restart: unless-stopped

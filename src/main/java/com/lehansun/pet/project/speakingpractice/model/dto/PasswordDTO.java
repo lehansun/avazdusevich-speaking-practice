@@ -1,0 +1,12 @@
+package com.lehansun.pet.project.speakingpractice.model.dto;
+
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+public class PasswordDTO {
+
+    private String currentPassword;
+    private String newPassword;
+}

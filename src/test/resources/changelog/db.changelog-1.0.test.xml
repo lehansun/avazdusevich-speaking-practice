@@ -1,0 +1,295 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet id="1.0.0" author="Aliaksei.Vazdusevich">
+        <createTable tableName="roles">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false" unique="true"/>
+            </column>
+            <column name="created" type="TIMESTAMP" defaultValue="CURRENT_TIMESTAMP()"/>
+            <column name="updated" type="TIMESTAMP" defaultValue="CURRENT_TIMESTAMP()"/>
+            <column name="status" type="VARCHAR(45)" defaultValue="ACTIVE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(45)" >
+                <constraints nullable="false" unique="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+
+
+    <changeSet id="1.0.1" author="Aliaksei.Vazdusevich">
+        <createTable tableName="languages">
+
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false" unique="true"/>
+            </column>
+            <column name="created" type="TIMESTAMP" defaultValue="CURRENT_TIMESTAMP()"/>
+            <column name="updated" type="TIMESTAMP" defaultValue="CURRENT_TIMESTAMP()"/>
+            <column name="status" type="VARCHAR(45)" defaultValue="ACTIVE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(45)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+
+        </createTable>
+    </changeSet>
+
+    <changeSet id="1.0.2" author="Aliaksei.Vazdusevich">
+        <createTable tableName="countries">
+
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false" unique="true"/>
+            </column>
+            <column name="created" type="TIMESTAMP" defaultValue="CURRENT_TIMESTAMP()"/>
+            <column name="updated" type="TIMESTAMP" defaultValue="CURRENT_TIMESTAMP()"/>
+            <column name="status" type="VARCHAR(45)" defaultValue="ACTIVE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(45)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+
+        </createTable>
+    </changeSet>
+
+
+    <changeSet id="1.0.3" author="Aliaksei.Vazdusevich">
+        <createTable tableName="customers">
+            <column name="id" type="BIGINT" autoIncrement="true" >
+                <constraints primaryKey="true" nullable="false" unique="true"/>
+            </column>
+            <column name="created" type="TIMESTAMP" defaultValue="CURRENT_TIMESTAMP()"/>
+            <column name="updated" type="TIMESTAMP" defaultValue="CURRENT_TIMESTAMP()"/>
+            <column name="status" type="VARCHAR(45)" defaultValue="ACTIVE">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="username" type="VARCHAR(45)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="firstname" type="VARCHAR(45)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="lastname" type="VARCHAR(45)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="email" type="VARCHAR(45)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="password" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="native_language_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="learning_language_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date_of_birth" type="DATE"/>
+            <column name="country_id" type="BIGINT"/>
+
+        </createTable>
+    </changeSet>
+
+    <changeSet id="1.0.4" author="Aliaksei.Vazdusevich">
+        <createTable tableName="customer_roles">
+
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false" unique="true"/>
+            </column>
+            <column name="created" type="TIMESTAMP" defaultValue="CURRENT_TIMESTAMP()"/>
+            <column name="updated" type="TIMESTAMP" defaultValue="CURRENT_TIMESTAMP()"/>
+            <column name="status" type="VARCHAR(45)" defaultValue="ACTIVE">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="customer_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="role_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+
+        </createTable>
+    </changeSet>
+
+    <changeSet id="1.0.5" author="Aliaksei.Vazdusevich">
+        <createTable tableName="requests">
+
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false" unique="true"/>
+            </column>
+            <column name="created" type="TIMESTAMP" defaultValue="CURRENT_TIMESTAMP()"/>
+            <column name="updated" type="TIMESTAMP" defaultValue="CURRENT_TIMESTAMP()"/>
+            <column name="status" type="VARCHAR(45)" defaultValue="ACTIVE">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="initiator_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="acceptor_id" type="BIGINT"/>
+            <column name="language_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="wished_start_time" type="DATE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="wished_end_time" type="DATE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="accepted_start_time" type="DATE"/>
+
+        </createTable>
+    </changeSet>
+
+    <changeSet id="1.0.6" author="Aliaksei.Vazdusevich">
+        <addForeignKeyConstraint baseTableName="customers"
+                                 baseColumnNames="native_language_id"
+                                 constraintName="fk_customers_native_language"
+                                 onDelete="CASCADE"
+                                 onUpdate="RESTRICT"
+                                 referencedTableName="languages"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+
+    <changeSet id="1.0.7" author="Aliaksei.Vazdusevich">
+        <addForeignKeyConstraint baseTableName="customers"
+                                 baseColumnNames="learning_language_id"
+                                 constraintName="fk_customers_learning_language"
+                                 onDelete="CASCADE"
+                                 onUpdate="RESTRICT"
+                                 referencedTableName="languages"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+
+    <changeSet id="1.0.8" author="Aliaksei.Vazdusevich">
+        <addForeignKeyConstraint baseTableName="customers"
+                                 baseColumnNames="country_id"
+                                 constraintName="fk_customers_country"
+                                 onDelete="CASCADE"
+                                 onUpdate="RESTRICT"
+                                 referencedTableName="countries"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+
+
+    <changeSet id="1.0.9" author="Aliaksei.Vazdusevich">
+        <addForeignKeyConstraint baseTableName="customer_roles"
+                                 baseColumnNames="customer_id"
+                                 constraintName="fk_customer_roles_customer"
+                                 onDelete="CASCADE"
+                                 onUpdate="RESTRICT"
+                                 referencedTableName="customers"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+
+    <changeSet id="1.0.10" author="Aliaksei.Vazdusevich">
+        <addForeignKeyConstraint baseTableName="customer_roles"
+                                 baseColumnNames="role_id"
+                                 constraintName="fk_customer_roles_role"
+                                 onDelete="CASCADE"
+                                 onUpdate="RESTRICT"
+                                 referencedTableName="roles"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+
+
+    <changeSet id="1.0.11" author="Aliaksei.Vazdusevich">
+        <addForeignKeyConstraint baseTableName="requests"
+                                 baseColumnNames="initiator_id"
+                                 constraintName="fk_requests_initiator"
+                                 onDelete="CASCADE"
+                                 onUpdate="RESTRICT"
+                                 referencedTableName="customers"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+
+    <changeSet id="1.0.12" author="Aliaksei.Vazdusevich">
+        <addForeignKeyConstraint baseTableName="requests"
+                                 baseColumnNames="acceptor_id"
+                                 constraintName="fk_requests_acceptor"
+                                 onDelete="CASCADE"
+                                 onUpdate="RESTRICT"
+                                 referencedTableName="customers"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+
+    <changeSet id="1.0.13" author="Aliaksei.Vazdusevich">
+        <addForeignKeyConstraint baseTableName="requests"
+                                 baseColumnNames="language_id"
+                                 constraintName="fk_requests_language"
+                                 onDelete="CASCADE"
+                                 onUpdate="RESTRICT"
+                                 referencedTableName="languages"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+
+    <!-- !!! -->
+
+
+    <changeSet id="1.0.14" author="Aliaksei.Vazdusevich">
+        <insert tableName="languages">
+            <column name="name" value="Russian"/>
+        </insert>
+        <insert tableName="languages">
+            <column name="name" value="English"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="1.0.15" author="Aliaksei.Vazdusevich">
+        <insert tableName="countries">
+            <column name="name" value="Belarus"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="1.0.16" author="Aliaksei.Vazdusevich">
+        <insert tableName="roles">
+            <column name="name" value="USER"/>
+        </insert>
+    </changeSet>
+
+
+    <changeSet id="1.0.17" author="Aliaksei.Vazdusevich">
+        <insert tableName="customers">
+            <column name="username" value="Lehansun"/>
+            <column name="firstname" value="Aliaksei"/>
+            <column name="lastname" value="Vazdusevich"/>
+            <column name="email" value="lehansun@live.com"/>
+            <column name="password" value="123123123"/>
+            <column name="native_language_id" value="1"/>
+            <column name="learning_language_id" value="2"/>
+            <column name="date_of_birth" value="1988-07-11"/>
+            <column name="country_id" value="1"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="1.0.18" author="Aliaksei.Vazdusevich">
+        <insert tableName="requests">
+            <column name="initiator_id" value="1"/>
+            <column name="language_id" value="2"/>
+            <column name="wished_start_time" value="2021-08-11"/>
+            <column name="wished_end_time" value="2021-08-12"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="1.0.19" author="Aliaksei.Vazdusevich">
+        <insert tableName="customers">
+            <column name="username" value="TestUsername"/>
+            <column name="firstname" value="TestFirstname"/>
+            <column name="lastname" value="TestLastname"/>
+            <column name="email" value="test@gmail.com"/>
+            <column name="password" value="test123123123"/>
+            <column name="native_language_id" value="2"/>
+            <column name="learning_language_id" value="1"/>
+            <column name="date_of_birth" value="2000-07-30"/>
+            <column name="country_id" value="1"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>
